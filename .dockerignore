@@ -1,0 +1,19 @@
+### Se ignora el archivo .env
+.env
+
+### Se ignora también la carpeta node_modules
+node_modules
+package-lock.json
+
+### Se ignora la carpeta .git
+.git
+.gitignore
+
+### Se ignora la carpeta .idea
+.idea
+
+### Se ignora la carpeta .vscode
+.vscode
+
+### README.md ignorado
+README.md
