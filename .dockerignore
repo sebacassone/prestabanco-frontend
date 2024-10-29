@@ -17,3 +17,9 @@ package-lock.json
 
 ### README.md ignorado
 README.md
+
+/node_modules
+.gitignore
+*.zip
+
+dist/

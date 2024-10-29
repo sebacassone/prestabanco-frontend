@@ -3,8 +3,8 @@ import TextField from '@mui/material/TextField';
 import calcularVerificador from '../utils/functions/CalculateVerificator';
 
 const RUTInput: React.FC = () => {
-    const [value, setValue] = useState('');
-    const [error, setError] = useState('');
+    const [value, setValue] = useState<string>('');
+    const [error, setError] = useState<string>('');
 
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
         const rawValue = event.target.value.replace(/[^0-9kK]/g, '').toUpperCase(); // Remove non-numeric characters and convert K to uppercase
@@ -33,9 +33,12 @@ const RUTInput: React.FC = () => {
         const rutParts = value.split('-');
         if (rutParts.length === 2) {
             const [rutBody, verifier] = rutParts;
-            if (calcularVerificador(rutBody.replace(/\./g, '')) !== verifier) {
+            if (calcularVerificador(rutBody.replace(/\./g, '')) !== verifier 
+            ||
+            rutParts[0].length < 8) {
                 setError('Error: Debes ingresar un RUT válido. ');
             } else {
+                console.log(rutBody);
                 setError('');
             }
         }

@@ -7,8 +7,8 @@ import Clear from '@mui/icons-material/Clear';
 import { useState } from 'react';
 
 const PasswordInput: React.FC = () => {
-  const [showPassword, setShowPassword] = useState(false);
-  const [value, setValue] = useState('');
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [value, setValue] = useState<string>('');
 
   const handleTogglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);

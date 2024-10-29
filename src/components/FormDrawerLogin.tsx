@@ -2,7 +2,7 @@ import Drawer from "@mui/material/Drawer";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import FormDrawerProps from "../interfaces/InterfaceFormDrawer";
+import FormDrawerProps from "../interfaces/FormDrawerLogin";
 import RUTInput from "./RutInput";
 import PasswordInput from "./PasswordComponent";
 
@@ -14,7 +14,6 @@ const FormDrawer: React.FC<FormDrawerProps> = ({ open, onClose }) => {
       onClose={onClose}
       ModalProps={{
         keepMounted: true, // Better open performance on mobile.
-        onBackdropClick: onClose, // Ensure this triggers the onClose function
       }}
       PaperProps={{
         sx: {

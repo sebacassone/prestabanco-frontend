@@ -1,6 +1,6 @@
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import SubMenuProps from "../interfaces/InterfaceSubmenu";
+import SubMenuProps from "../interfaces/SubmenuHome";
 
 const SubMenu: React.FC<SubMenuProps> = ({ anchorEl, open, onClose, options }) => {
   return (

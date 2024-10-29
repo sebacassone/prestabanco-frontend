@@ -7,12 +7,12 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import SubMenu from "./Sidemenu";
 import {Fragment} from 'react';
-import FormDrawer from "./FormDrawer";
+import FormDrawer from "./FormDrawerLogin";
 
-export default function Navbar() {
+export default function NavbarHome() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [menuId, setMenuId] = useState<string | null>(null);
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
 
   // Lo que hace esto es que al hacer click en un botón, se abre un menú con opciones
   const handleClick = (event: MouseEvent<HTMLElement>, id: string) => {
