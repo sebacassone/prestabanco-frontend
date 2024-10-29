@@ -5,17 +5,17 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Clear from '@mui/icons-material/Clear';
 import { useState } from 'react';
+import RUTInputProps from '../interfaces/RutInput';
 
-const PasswordInput: React.FC = () => {
+const PasswordInput: React.FC<RUTInputProps> = ({ value, onValueChange, onBlur }) => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [value, setValue] = useState<string>('');
 
   const handleTogglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
   };
 
   const handleClear = () => {
-    setValue('');
+    onValueChange('');
   };
 
   return (
@@ -26,7 +26,8 @@ const PasswordInput: React.FC = () => {
       fullWidth
       margin="normal"
       value={value}
-      onChange={(e) => setValue(e.target.value)}
+      onChange={(e) => onValueChange(e.target.value)}
+      onBlur={onBlur}
       InputProps={{
         endAdornment: (
           <InputAdornment position="end">

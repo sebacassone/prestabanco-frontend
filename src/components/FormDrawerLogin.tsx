@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import Drawer from "@mui/material/Drawer";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -5,8 +6,53 @@ import Typography from "@mui/material/Typography";
 import FormDrawerProps from "../interfaces/FormDrawerLogin";
 import RUTInput from "./RutInput";
 import PasswordInput from "./PasswordComponent";
+import calcularVerificador from '../utils/functions/CalculateVerificator';
 
 const FormDrawer: React.FC<FormDrawerProps> = ({ open, onClose }) => {
+  const [credentials, setCredentials] = useState({ rut: '', password: '' });
+  const [isValid, setIsValid] = useState(false);
+  const [passwordEntered, setPasswordEntered] = useState(false);
+
+  useEffect(() => {
+    setIsValid(
+      validateRUT(credentials.rut) &&
+      passwordEntered
+    );
+  }, [credentials, passwordEntered]);
+
+  const handleRUTChange = (value: string) => {
+    setCredentials(prev => ({ ...prev, rut: value }));
+  };
+
+  const handlePasswordChange = (value: string) => {
+    setCredentials(prev => ({ ...prev, password: value }));
+    setPasswordEntered(value.length > 0);
+  };
+
+  const handlePasswordBlur = () => {
+    if (credentials.password.length > 0) {
+      setPasswordEntered(true);
+    } else {
+      setPasswordEntered(false);
+    }
+  };
+
+  const handleSubmit = () => {
+    if (isValid) {
+      console.log('Submitting:', credentials);
+      // Aquí puedes agregar la lógica para enviar las credenciales al backend
+    }
+  };
+
+  const validateRUT = (rut: string) => {
+    const rutParts = rut.split('-');
+    if (rutParts.length === 2) {
+      const [rutBody, verifier] = rutParts;
+      return calcularVerificador(rutBody.replace(/\./g, '')) === verifier && rutParts[0].length >= 8;
+    }
+    return false;
+  };
+
   return (
     <Drawer
       anchor="right"
@@ -37,22 +83,27 @@ const FormDrawer: React.FC<FormDrawerProps> = ({ open, onClose }) => {
         <Typography variant="h5" gutterBottom>
           Ingresa a tu cuenta
         </Typography>
-        <RUTInput />
-        <PasswordInput />
-
+        <RUTInput value={credentials.rut} onValueChange={handleRUTChange} />
+        <PasswordInput 
+          value={credentials.password} 
+          onValueChange={handlePasswordChange}
+          onBlur={handlePasswordBlur}
+        />
         <Button
           variant="contained"
           sx={{
             marginTop: 2,
-            bgcolor: '#F6F6F6',
-            color: 'black',
+            bgcolor: isValid ? '#3B1E54' : '#F6F6F6',
+            color: isValid ? '#EEEEEE' : 'black',
             borderRadius: '50px',
             padding: '10px 20px',
             width: '80%',
             '&:hover': {
-              bgcolor: '#D4BEE4',
+              bgcolor: isValid ? '#3B1E54' : '#D4BEE4',
             }
           }}
+          onClick={handleSubmit}
+          disabled={!isValid}
         >
           Ingresar
         </Button>
