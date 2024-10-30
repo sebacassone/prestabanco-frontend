@@ -1,6 +1,18 @@
 import { ChangeEvent } from "react";
 import calcularVerificador from "./functions/CalculateVerificator";
 
+/*
+All the logic for handling the RUT input is encapsulated in this file.
+The handleRutChange function formats the RUT as the user types it.
+The handleRutBlur function validates the RUT when the input loses focus.
+*/
+
+/**
+ * Function that formats the RUT as the user types it.
+ * @param event - The event that triggered the function.
+ * @param setValue - The function that updates the value of the input.
+ * @returns void
+  */
 const handleRutChange = (
   event: ChangeEvent<HTMLInputElement>,
   setValue: (value: string) => void
@@ -23,6 +35,12 @@ const handleRutChange = (
   setValue(formattedValue);
 };
 
+/**
+ * Function that validates the RUT when the input loses focus.
+ * @param value - The value of the input.
+ * @param setError - The function that updates the error message.
+ * @returns void
+  */
 const handleRutBlur = (value: string, setError: (value: string) => void) => {
   const rutParts = value.split("-");
   if (rutParts.length === 2) {

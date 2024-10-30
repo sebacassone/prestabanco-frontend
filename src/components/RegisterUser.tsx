@@ -11,23 +11,25 @@ import address from '../interfaces/AddressObject';
 import job from '../interfaces/JobObject';
 import StepContent from './StepContent';
 
-const steps = ['Datos Personales', 'Dirección', 'Trabajo', 'Ingresos' ,'Confirmación'];
+const steps = ['Datos Personales', 'Dirección', 'Trabajo', 'Ingresos', 'Confirmación'];
 
 const UserForm: React.FC = () => {
-  // State variable for the user information
   const [user, setUser] = useState<user>({
     rut: '',
     phone: '',
     email: '',
     birthday: '',
-    name:'',
-    firstLastName:'',
-    secondLastName:'',
-    status:'Active',
-    typeUser:'Client',
+    name: '',
+    firstLastName: '',
+    secondLastName: '',
+    status: 'Active',
+    typeUser: 'Client',
   });
+
   const [activeStep, setActiveStep] = useState<number>(0);
-  // State variable for the address information
+  const [isPhoneValid, setIsPhoneValid] = useState<boolean>(false);
+  const [isEmailValid, setIsEmailValid] = useState<boolean>(false);
+
   const [address, setAddress] = useState<address>({
     street: '',
     number: '',
@@ -36,37 +38,13 @@ const UserForm: React.FC = () => {
     country: '',
   });
 
-  // State variable for the job information
   const [job, setJob] = useState<job>({
     activity: '',
     seniorityJob: '',
   });
 
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    if (activeStep === 0) {
-      setUser({
-        ...user,
-        [e.target.name]: e.target.value.replace(/[^0-9kK]/g, '').toUpperCase(),
-      });
-      return;
-    } else if (activeStep === 1) {
-      setAddress({
-        ...address,
-        [e.target.name]: e.target.value,
-      });
-      return;
-    } else if (activeStep === 3) {
-      setJob({
-        ...job,
-        [e.target.name]: e.target.value,
-      });
-      return;
-    }
-  };
-
   const handleNext = () => {
-    if (activeStep < steps.length - 1) {
+    if (activeStep < steps.length - 1 && isPhoneValid && isEmailValid) {
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
     }
   };
@@ -82,8 +60,48 @@ const UserForm: React.FC = () => {
     console.log('User Information:', user);
   };
 
+  const formatPhone = (value: string) => {
+  const cleaned = value.replace(/\D/g, '');
+  if (cleaned.length === 11 && cleaned.startsWith('569')) {
+    const formattedValue = `+56 9 ${cleaned.slice(2, 6)} ${cleaned.slice(6, 11)}`;
+    return formattedValue;
+  }
+  return value;
+};
+
+const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const { name, value } = e.target;
+  if (activeStep === 0) {
+    if (name === 'phone') {
+      const formattedValue = formatPhone(value);
+      setUser((prevUser) => ({ ...prevUser, [name]: formattedValue }));
+      setIsPhoneValid(validatePhone(value));
+      return;
+    }
+    if (name === 'email') {
+      setUser((prevUser) => ({ ...prevUser, [name]: value }));
+      setIsEmailValid(validateEmail(value));
+      return;
+    }
+    setUser((prevUser) => ({ ...prevUser, [name]: value }));
+  } else if (activeStep === 1) {
+    setAddress((prevAddress) => ({ ...prevAddress, [name]: value }));
+  } else if (activeStep === 2) {
+    setJob((prevJob) => ({ ...prevJob, [name]: value }));
+  }
+};
+
+const validatePhone = (value: string) => {
+    const cleaned = value.replace(/\D/g, '');
+    return cleaned.length === 11 && cleaned.startsWith('569');
+  };
+  
+  const validateEmail = (value: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(value);
+  };
+
   return (
-    // Add the following code snippet to the return statement in the UserForm component
     <Box
       sx={{
         position: 'relative',
@@ -93,7 +111,7 @@ const UserForm: React.FC = () => {
         backgroundRepeat: 'no-repeat',
         backgroundSize: 'cover',
         borderBottomLeftRadius: '50% 1rem',
-        borderBottomRightRadius: '150% 7rem', // gives it curvature
+        borderBottomRightRadius: '150% 7rem',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
@@ -101,7 +119,6 @@ const UserForm: React.FC = () => {
         padding: '20px',
       }}
     >
-      {/* This is a text over the image */}
       <Box
         sx={{
           maxWidth: '40%',
@@ -131,8 +148,6 @@ const UserForm: React.FC = () => {
         <Typography variant="h5" sx={{ marginBottom: '20px' }}>
           Formulario CMR
         </Typography>
-
-        {/* This draws the progress in the forms */}
         <Stepper activeStep={activeStep} alternativeLabel>
           {steps.map((label) => (
             <Step key={label}>
@@ -140,23 +155,25 @@ const UserForm: React.FC = () => {
             </Step>
           ))}
         </Stepper>
-
-        {/* This is the form */}
         <form onSubmit={handleSubmit}>
-          < StepContent step={activeStep} user={user} job={job} address={address} handleChange={handleChange}/> {/* This renders the form */}
-
-          {/* This causes the button to change */}
+          <StepContent
+            step={activeStep}
+            user={user}
+            job={job}
+            address={address}
+            handleChange={handleChange}
+          />
           <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
-            {activeStep > 0 && ( // This is to show the back button
+            {activeStep > 0 && (
               <Button onClick={handleBack} sx={{ marginRight: '10px' }}>
                 Atrás
               </Button>
             )}
-            {activeStep < steps.length - 1 ? ( // This is to show the next button
+            {activeStep < steps.length - 1 ? (
               <Button onClick={handleNext} variant="contained" color="primary" fullWidth>
                 Siguiente
               </Button>
-            ) : ( // This is to show the submit button
+            ) : (
               <Button type="submit" variant="contained" color="primary" fullWidth>
                 Enviar
               </Button>

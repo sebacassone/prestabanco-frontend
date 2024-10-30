@@ -1,27 +1,44 @@
 import { TextField, MenuItem } from '@mui/material';
 import StepContentProps from '../interfaces/StepContent';
-
+import RUTInput from './RutInput';
 
 const StepContent: React.FC<StepContentProps> = ({ step, user, address, job, handleChange }) => {
   switch (step) {
     case 0:
       return (
         <div>
-          <TextField label="RUT" name="rut" placeholder="Ej: 11.111.111-1" fullWidth margin="normal" value={user.rut} onChange={handleChange} required />
-          <TextField label="Celular" name="phone" placeholder="Ej: 9XX XXX XXX" fullWidth margin="normal" value={user.phone} onChange={handleChange} required />
-          <TextField label="Email" name="email" placeholder="Ej: nombre@dominio.com" fullWidth margin="normal" value={user.email} onChange={handleChange} required />
-        </div>
-      );
+          <RUTInput value={user.rut}
+            onValueChange={
+              (value) => handleChange({
+                target: { name: 'rut', value } 
+                } as React.ChangeEvent<HTMLInputElement>)} />
+          <TextField 
+            label="Celular"
+            name="phone"
+            placeholder="Ej: +56 9 XXXX XXXX"
+            fullWidth margin="normal"
+            value={user.phone}
+            onChange={handleChange}
+            required
+            inputProps={{maxLenght: 14}}
+            />
+          <TextField
+            label="Email"
+            name="email"
+            placeholder="Ej: nombre@dominio.com"
+            fullWidth margin="normal"
+            value={user.email}
+            onChange={handleChange}
+            required />
+          </div> 
+        );
     case 1:
       return (
         <div>
           <TextField label="Calle" name="street" placeholder="Ej: Av. Siempre Viva" fullWidth margin="normal" value={address.street} onChange={handleChange} required />
-          <TextField label="Número" name="number" placeholder="Ej: 1234" fullWidth margin="normal" value={address.number} onChange={handleChange} required />
-          <TextField label="Comuna" name="commune" placeholder="Ej: Springfield" fullWidth margin="normal" value={address.commune} onChange={handleChange} required />
-          <TextField label="Región" name="region" placeholder="Ej: Metropolitana" fullWidth margin="normal" value={address.region} onChange={handleChange} required />
-          <TextField label="País" name="country" placeholder="Ej: Chile" fullWidth margin="normal" value={address.country} onChange={handleChange} required />
-        </div>
-      );
+          <TextField label="Número" name="number" placeholder="Ej: 1234" fullWidth margin="normal" value={address.number} onChange={handleChange} required /> <TextField label="Comuna" name="commune" placeholder="Ej: Springfield" fullWidth margin="normal" value={address.commune} onChange={handleChange} required /> <TextField label="Región" name="region" placeholder="Ej: Metropolitana" fullWidth margin="normal" value={address.region} onChange={handleChange} required /> <TextField label="País" name="country" placeholder="Ej: Chile" fullWidth margin="normal" value={address.country} onChange={handleChange} required />
+          </div>
+          );
     case 2:
       return (
         <div>

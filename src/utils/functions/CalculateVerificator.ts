@@ -1,3 +1,8 @@
+/**
+ * Function that calculates the check digit of a Chilean rut.
+ * @param numero - Rout number without the check digit.
+ * @returns The verification digit of the routine.
+  */
 const calcularVerificador = (numero: string): string => {
   let sum = 0;
   let mul = 2;

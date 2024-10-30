@@ -20,21 +20,17 @@ const FormDrawer: React.FC<FormDrawerProps> = ({ open, onClose }) => {
     );
   }, [credentials, passwordEntered]);
 
-  const handleRUTChange = (value: string) => {
-    setCredentials(prev => ({ ...prev, rut: value }));
-  };
-
-  const handlePasswordChange = (value: string) => {
-    setCredentials(prev => ({ ...prev, password: value }));
-    setPasswordEntered(value.length > 0);
-  };
-
-  const handlePasswordBlur = () => {
-    if (credentials.password.length > 0) {
-      setPasswordEntered(true);
-    } else {
-      setPasswordEntered(false);
+  const handleChange = (field: string, value: string) => {
+    setCredentials(prev => ({ ...prev, [field]: value }));
+    if (field === 'password') {
+      setPasswordEntered(value.length > 0);
     }
+  };
+
+  const handleBlur = (field: string) => {
+      if (field === 'password' && credentials.password.length === 0) {
+        setPasswordEntered(false); 
+      }
   };
 
   const handleSubmit = () => {
@@ -83,11 +79,11 @@ const FormDrawer: React.FC<FormDrawerProps> = ({ open, onClose }) => {
         <Typography variant="h5" gutterBottom>
           Ingresa a tu cuenta
         </Typography>
-        <RUTInput value={credentials.rut} onValueChange={handleRUTChange} />
+        <RUTInput value={credentials.rut} onValueChange={(value) => handleChange('rut', value)} />
         <PasswordInput 
-          value={credentials.password} 
-          onValueChange={handlePasswordChange}
-          onBlur={handlePasswordBlur}
+          value={credentials.password}
+          onValueChange={(value) => handleChange('password', value)}
+          onBlur={() => handleBlur('password')}
         />
         <Button
           variant="contained"
