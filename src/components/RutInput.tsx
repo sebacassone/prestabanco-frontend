@@ -3,10 +3,11 @@ import TextField from '@mui/material/TextField';
 import calcularVerificador from '../utils/functions/CalculateVerificator';
 import RUTInputProps from '../interfaces/RutInput';
 
-const RUTInput: React.FC<RUTInputProps> = ({ value, onValueChange }) => {
+const RUTInput: React.FC<RUTInputProps> = ({ value, onValueChange, width }) => {
   const [error, setError] = useState<string>('');
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    // Remove all non-numeric characters and convert to uppercase
     const rawValue = event.target.value.replace(/[^0-9kK]/g, '').toUpperCase();
     let formattedValue = '';
     let rutBody = rawValue.slice(0, -1);
@@ -47,9 +48,6 @@ const RUTInput: React.FC<RUTInputProps> = ({ value, onValueChange }) => {
       onBlur={handleBlur}
       error={Boolean(error)}
       helperText={error}
-      inputProps={{
-        maxLength: 12,
-      }}
       sx={{
         backgroundColor: '#F6F6F6',
         borderRadius: '10px',
@@ -58,7 +56,10 @@ const RUTInput: React.FC<RUTInputProps> = ({ value, onValueChange }) => {
             borderRadius: '10px',
           },
         },
-        width: '80%',
+        width: width? width:'80%',
+      }}
+      inputProps={{
+        maxLength: 12,
       }}
     />
   );

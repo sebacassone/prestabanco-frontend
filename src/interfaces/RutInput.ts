@@ -8,6 +8,7 @@
 interface RUTInputProps {
   value: string;
   onValueChange: (value: string) => void;
+  width?: string;
   onBlur?: () => void;
 }
 

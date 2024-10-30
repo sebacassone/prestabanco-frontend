@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState} from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -10,6 +10,8 @@ import user from '../interfaces/UserObject';
 import address from '../interfaces/AddressObject';
 import job from '../interfaces/JobObject';
 import StepContent from './StepContent';
+import { OfLegalAge, ValidateDate } from '../utils/functions/ValidateDate';
+import { ValidateEmail } from '../utils/functions/ValidateEmail';
 
 const steps = ['Datos Personales', 'Dirección', 'Trabajo', 'Ingresos', 'Confirmación'];
 
@@ -25,11 +27,7 @@ const UserForm: React.FC = () => {
     status: 'Active',
     typeUser: 'Client',
   });
-
   const [activeStep, setActiveStep] = useState<number>(0);
-  const [isPhoneValid, setIsPhoneValid] = useState<boolean>(false);
-  const [isEmailValid, setIsEmailValid] = useState<boolean>(false);
-
   const [address, setAddress] = useState<address>({
     street: '',
     number: '',
@@ -37,14 +35,40 @@ const UserForm: React.FC = () => {
     region: '',
     country: '',
   });
-
   const [job, setJob] = useState<job>({
     activity: '',
     seniorityJob: '',
   });
 
   const handleNext = () => {
-    if (activeStep < steps.length - 1 && isPhoneValid && isEmailValid) {
+    if (activeStep < steps.length - 1 && activeStep === 0) {
+      console.log(user);
+      if (user.rut.length !== 0 &&
+        user.phone.length !== 0 &&
+        user.name.length !== 0 &&
+        user.firstLastName.length !== 0 &&
+        user.secondLastName.length !== 0 &&
+        ValidateEmail(user.email) &&
+        ValidateDate(user.birthday) && OfLegalAge(user.birthday) &&
+        user.email.length !== 0
+      ) {
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      }
+    } else if (activeStep < steps.length - 1 && activeStep === 1) {
+      if (
+        address.street.length !== 0 &&
+        address.number.length !== 0 &&
+        address.commune.length !== 0 &&
+        address.region.length !== 0 &&
+        address.country.length !== 0
+      ) {
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      }
+    } else if (activeStep < steps.length - 1 && activeStep === 2) {
+      if (job.activity.length !== 0 && job.seniorityJob.length !== 0) {
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      }
+    } else {
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
     }
   };
@@ -60,45 +84,22 @@ const UserForm: React.FC = () => {
     console.log('User Information:', user);
   };
 
-  const formatPhone = (value: string) => {
-  const cleaned = value.replace(/\D/g, '');
-  if (cleaned.length === 11 && cleaned.startsWith('569')) {
-    const formattedValue = `+56 9 ${cleaned.slice(2, 6)} ${cleaned.slice(6, 11)}`;
-    return formattedValue;
-  }
-  return value;
-};
-
-const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-  const { name, value } = e.target;
-  if (activeStep === 0) {
-    if (name === 'phone') {
-      const formattedValue = formatPhone(value);
-      setUser((prevUser) => ({ ...prevUser, [name]: formattedValue }));
-      setIsPhoneValid(validatePhone(value));
-      return;
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    if (activeStep === 0) {
+      if (name === 'phone') {
+        const rawValue = value.replace(/[^0-9]/g, '').toUpperCase();
+        setUser((prevUser) => ({ ...prevUser, [name]: rawValue }));
+      } else if (name === 'birtday') {
+        setUser((prevUser) => ({ ...prevUser, [name]: value }));
+      } else {
+        setUser((prevUser) => ({ ...prevUser, [name]: value }));
+      }
+    } else if (activeStep === 1) {
+      setAddress((prevAddress) => ({ ...prevAddress, [name]: value }));
+    } else if (activeStep === 2) {
+      setJob((prevJob) => ({ ...prevJob, [name]: value }));
     }
-    if (name === 'email') {
-      setUser((prevUser) => ({ ...prevUser, [name]: value }));
-      setIsEmailValid(validateEmail(value));
-      return;
-    }
-    setUser((prevUser) => ({ ...prevUser, [name]: value }));
-  } else if (activeStep === 1) {
-    setAddress((prevAddress) => ({ ...prevAddress, [name]: value }));
-  } else if (activeStep === 2) {
-    setJob((prevJob) => ({ ...prevJob, [name]: value }));
-  }
-};
-
-const validatePhone = (value: string) => {
-    const cleaned = value.replace(/\D/g, '');
-    return cleaned.length === 11 && cleaned.startsWith('569');
-  };
-  
-  const validateEmail = (value: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(value);
   };
 
   return (
@@ -146,7 +147,7 @@ const validatePhone = (value: string) => {
         }}
       >
         <Typography variant="h5" sx={{ marginBottom: '20px' }}>
-          Formulario CMR
+          Registro PrestaBanco
         </Typography>
         <Stepper activeStep={activeStep} alternativeLabel>
           {steps.map((label) => (
