@@ -4,6 +4,7 @@ import RUTInput from './RutInput';
 import { ValidateEmail } from '../utils/functions/ValidateEmail';
 import { useState } from 'react';
 import { ValidateDate, OfLegalAge } from '../utils/functions/ValidateDate';
+import Communes from '../utils/json/communes.json';
 
 const StepContent: React.FC<StepContentProps> = ({ step, user, address, job, handleChange }) => {
   const [errorEmail, setErrorEmail] = useState<string>('');
@@ -83,27 +84,27 @@ const StepContent: React.FC<StepContentProps> = ({ step, user, address, job, han
             required
           />
           <TextField
-          label="Cumpleaños"
-          name="birthday"
-          type="date"
-          fullWidth margin="normal"
-          InputLabelProps={{ shrink: true, }}
-          value={user.birthday}
-          onChange={handleChange}
-          error={Boolean(errorBirthday)}
-          helperText={errorBirthday}
-          onBlur={() => {
-            if (user.birthday.length === 0) {
-              setErrorBirthday('');
-            } else if (!ValidateDate(user.birthday)) {
-              setErrorBirthday('Error: Debes ingresar una fecha válida.');
-            } else if (!OfLegalAge(user.birthday)) {
-              setErrorBirthday('Error: Debes ser mayor de edad.');
-            } else {
-              setErrorBirthday('');
-            }
-          }}
-          required
+            label="Cumpleaños"
+            name="birthday"
+            type="date"
+            fullWidth margin="normal"
+            InputLabelProps={{ shrink: true, }}
+            value={user.birthday}
+            onChange={handleChange}
+            error={Boolean(errorBirthday)}
+            helperText={errorBirthday}
+            onBlur={() => {
+              if (user.birthday.length === 0) {
+                setErrorBirthday('');
+              } else if (!ValidateDate(user.birthday)) {
+                setErrorBirthday('Error: Debes ingresar una fecha válida.');
+              } else if (!OfLegalAge(user.birthday)) {
+                setErrorBirthday('Error: Debes ser mayor de edad.');
+              } else {
+                setErrorBirthday('');
+              }
+            }}
+            required
           />
         </div>
       );
@@ -131,26 +132,44 @@ const StepContent: React.FC<StepContentProps> = ({ step, user, address, job, han
             required
           />
           <TextField
-            label="Comuna"
-            name="commune"
-            placeholder="Ej: Springfield"
-            fullWidth
-            margin="normal"
-            value={address.commune}
-            onChange={handleChange}
-            required
-          />
-          <TextField
+            select
             label="Región"
             name="region"
-            placeholder="Ej: Metropolitana"
             fullWidth
             margin="normal"
             value={address.region}
             onChange={handleChange}
             required
-          />
+          > 
+            {Communes.regions.map((region) => (
+              <MenuItem value={region.name}>
+                {region.name}
+              </MenuItem>
+            ))}
+          </TextField>
           <TextField
+            select
+            label="Comuna"
+            name="commune"
+            fullWidth
+            margin="normal"
+            value={address.commune}
+            onChange={handleChange}
+            required
+          >
+            {Communes.regions.find(
+              (region) => 
+                region.name === address.region)?.communes.map(
+                  (commune) => (
+                    <MenuItem value={commune.name}>
+                      {commune.name}
+                    </MenuItem>
+                  )
+                )
+            }
+          </TextField>
+          <TextField
+            select
             label="País"
             name="country"
             placeholder="Ej: Chile"
@@ -159,7 +178,9 @@ const StepContent: React.FC<StepContentProps> = ({ step, user, address, job, han
             value={address.country}
             onChange={handleChange}
             required
-          />
+          >
+            <MenuItem value={Communes.name}> {Communes.name} </MenuItem>
+          </TextField>
         </div>
       );
     case 2:
@@ -179,18 +200,32 @@ const StepContent: React.FC<StepContentProps> = ({ step, user, address, job, han
             <MenuItem value="empleado">Empleado</MenuItem>
             <MenuItem value="independiente">Independiente</MenuItem>
             <MenuItem value="estudiante">Estudiante</MenuItem>
-            <MenuItem value="otro">Otro</MenuItem>
+            <MenuItem value="cesante">Cesante</MenuItem>
           </TextField>
+          { job.activity !== "cesante" && (
           <TextField
-            label="Antigüedad en el trabajo"
+            label="¿Qué fecha comenzó en su trabajo actual (con ingresos)?"
             name="seniorityJob"
-            placeholder="Ej: 5 años"
+            type="date"
             fullWidth
             margin="normal"
+            InputLabelProps={{ shrink: true }}
             value={job.seniorityJob}
             onChange={handleChange}
+            error={Boolean(errorBirthday)}
+            helperText={errorBirthday}
+            onBlur={() => {
+              if (user.birthday.length === 0) {
+                setErrorBirthday('');
+              } else if (!ValidateDate(job.seniorityJob)) {
+                setErrorBirthday('Error: Debes ingresar una fecha válida.');
+              } else {
+                setErrorBirthday('');
+              }
+            }}
             required
           />
+        )}
         </div>
       );
     default:
