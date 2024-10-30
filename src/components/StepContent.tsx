@@ -1,4 +1,12 @@
-import { TextField, MenuItem, FormControl, InputLabel, OutlinedInput, InputAdornment, Box } from '@mui/material';
+import {
+  TextField,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  OutlinedInput,
+  InputAdornment,
+  Box,
+} from '@mui/material';
 import StepContentProps from '../interfaces/StepContent';
 import RUTInput from './RutInput';
 import { ValidateEmail } from '../utils/functions/ValidateEmail';
@@ -6,7 +14,13 @@ import { useState } from 'react';
 import { ValidateDate, OfLegalAge } from '../utils/functions/ValidateDate';
 import Communes from '../utils/json/communes.json';
 
-const StepContent: React.FC<StepContentProps> = ({ step, user, address, job, handleChange }) => {
+const StepContent: React.FC<StepContentProps> = ({
+  step,
+  user,
+  address,
+  job,
+  handleChange,
+}) => {
   const [errorEmail, setErrorEmail] = useState<string>('');
   const [errorBirthday, setErrorBirthday] = useState<string>('');
   switch (step) {
@@ -15,37 +29,44 @@ const StepContent: React.FC<StepContentProps> = ({ step, user, address, job, han
         <div>
           <Box display="flex" flexDirection="row" gap={2}>
             <TextField
-            label="Nombre"
-            name="name"
-            placeholder="Ej: Juan"
-            fullWidth margin="normal"
-            value={user.name}
-            onChange={handleChange}
-            required
+              label="Nombre"
+              name="name"
+              placeholder="Ej: Juan"
+              fullWidth
+              margin="normal"
+              value={user.name}
+              onChange={handleChange}
+              required
             />
             <TextField
-            label="Apellido Paterno"
-            name="firstLastName"
-            placeholder="Ej: Pérez"
-            fullWidth margin="normal"
-            value={user.firstLastName}
-            onChange={handleChange}
-            required
+              label="Apellido Paterno"
+              name="firstLastName"
+              placeholder="Ej: Pérez"
+              fullWidth
+              margin="normal"
+              value={user.firstLastName}
+              onChange={handleChange}
+              required
             />
             <TextField
-            label="Apellido Materno"
-            name="secondLastName"
-            placeholder="Ej: González"
-            fullWidth margin="normal"
-            value={user.secondLastName}
-            onChange={handleChange}
-            required
+              label="Apellido Materno"
+              name="secondLastName"
+              placeholder="Ej: González"
+              fullWidth
+              margin="normal"
+              value={user.secondLastName}
+              onChange={handleChange}
+              required
             />
-            </Box>
-          <RUTInput 
-            value={user.rut} 
-            onValueChange={(value) => handleChange({ target: { name: 'rut', value } } as React.ChangeEvent<HTMLInputElement>)} 
-            width='100%'
+          </Box>
+          <RUTInput
+            value={user.rut}
+            onValueChange={(value) =>
+              handleChange({
+                target: { name: 'rut', value },
+              } as React.ChangeEvent<HTMLInputElement>)
+            }
+            width="100%"
           />
           <FormControl fullWidth margin="normal">
             <InputLabel htmlFor="phone">Celular</InputLabel>
@@ -54,13 +75,15 @@ const StepContent: React.FC<StepContentProps> = ({ step, user, address, job, han
               name="phone"
               value={user.phone}
               onChange={handleChange}
-              startAdornment={<InputAdornment position="start">+56 9</InputAdornment>}
+              startAdornment={
+                <InputAdornment position="start">+56 9</InputAdornment>
+              }
               placeholder="XXXX XXXX"
               required
               inputProps={{
                 maxLength: 8,
                 inputMode: 'numeric',
-                pattern: '[0-9]*' // This ensures only numbers are accepted
+                pattern: '[0-9]*', // This ensures only numbers are accepted
               }} // Ensure max length is 8 for the remaining part
             />
           </FormControl>
@@ -87,8 +110,9 @@ const StepContent: React.FC<StepContentProps> = ({ step, user, address, job, han
             label="Cumpleaños"
             name="birthday"
             type="date"
-            fullWidth margin="normal"
-            InputLabelProps={{ shrink: true, }}
+            fullWidth
+            margin="normal"
+            InputLabelProps={{ shrink: true }}
             value={user.birthday}
             onChange={handleChange}
             error={Boolean(errorBirthday)}
@@ -140,11 +164,9 @@ const StepContent: React.FC<StepContentProps> = ({ step, user, address, job, han
             value={address.region}
             onChange={handleChange}
             required
-          > 
+          >
             {Communes.regions.map((region) => (
-              <MenuItem value={region.name}>
-                {region.name}
-              </MenuItem>
+              <MenuItem value={region.name}>{region.name}</MenuItem>
             ))}
           </TextField>
           <TextField
@@ -157,16 +179,11 @@ const StepContent: React.FC<StepContentProps> = ({ step, user, address, job, han
             onChange={handleChange}
             required
           >
-            {Communes.regions.find(
-              (region) => 
-                region.name === address.region)?.communes.map(
-                  (commune) => (
-                    <MenuItem value={commune.name}>
-                      {commune.name}
-                    </MenuItem>
-                  )
-                )
-            }
+            {Communes.regions
+              .find((region) => region.name === address.region)
+              ?.communes.map((commune) => (
+                <MenuItem value={commune.name}>{commune.name}</MenuItem>
+              ))}
           </TextField>
           <TextField
             select
@@ -202,30 +219,30 @@ const StepContent: React.FC<StepContentProps> = ({ step, user, address, job, han
             <MenuItem value="estudiante">Estudiante</MenuItem>
             <MenuItem value="cesante">Cesante</MenuItem>
           </TextField>
-          { job.activity !== "cesante" && (
-          <TextField
-            label="¿Qué fecha comenzó en su trabajo actual (con ingresos)?"
-            name="seniorityJob"
-            type="date"
-            fullWidth
-            margin="normal"
-            InputLabelProps={{ shrink: true }}
-            value={job.seniorityJob}
-            onChange={handleChange}
-            error={Boolean(errorBirthday)}
-            helperText={errorBirthday}
-            onBlur={() => {
-              if (user.birthday.length === 0) {
-                setErrorBirthday('');
-              } else if (!ValidateDate(job.seniorityJob)) {
-                setErrorBirthday('Error: Debes ingresar una fecha válida.');
-              } else {
-                setErrorBirthday('');
-              }
-            }}
-            required
-          />
-        )}
+          {job.activity !== 'cesante' && (
+            <TextField
+              label="¿Qué fecha comenzó en su trabajo actual (con ingresos)?"
+              name="seniorityJob"
+              type="date"
+              fullWidth
+              margin="normal"
+              InputLabelProps={{ shrink: true }}
+              value={job.seniorityJob}
+              onChange={handleChange}
+              error={Boolean(errorBirthday)}
+              helperText={errorBirthday}
+              onBlur={() => {
+                if (user.birthday.length === 0) {
+                  setErrorBirthday('');
+                } else if (!ValidateDate(job.seniorityJob)) {
+                  setErrorBirthday('Error: Debes ingresar una fecha válida.');
+                } else {
+                  setErrorBirthday('');
+                }
+              }}
+              required
+            />
+          )}
         </div>
       );
     default:

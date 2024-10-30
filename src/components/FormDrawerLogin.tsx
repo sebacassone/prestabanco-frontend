@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import Drawer from "@mui/material/Drawer";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import FormDrawerProps from "../interfaces/FormDrawerLogin";
-import RUTInput from "./RutInput";
-import PasswordInput from "./PasswordComponent";
+import Drawer from '@mui/material/Drawer';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import FormDrawerProps from '../interfaces/FormDrawerLogin';
+import RUTInput from './RutInput';
+import PasswordInput from './PasswordComponent';
 import calcularVerificador from '../utils/functions/CalculateVerificator';
 
 const FormDrawer: React.FC<FormDrawerProps> = ({ open, onClose }) => {
@@ -14,23 +14,20 @@ const FormDrawer: React.FC<FormDrawerProps> = ({ open, onClose }) => {
   const [passwordEntered, setPasswordEntered] = useState(false);
 
   useEffect(() => {
-    setIsValid(
-      validateRUT(credentials.rut) &&
-      passwordEntered
-    );
+    setIsValid(validateRUT(credentials.rut) && passwordEntered);
   }, [credentials, passwordEntered]);
 
   const handleChange = (field: string, value: string) => {
-    setCredentials(prev => ({ ...prev, [field]: value }));
+    setCredentials((prev) => ({ ...prev, [field]: value }));
     if (field === 'password') {
       setPasswordEntered(value.length > 0);
     }
   };
 
   const handleBlur = (field: string) => {
-      if (field === 'password' && credentials.password.length === 0) {
-        setPasswordEntered(false); 
-      }
+    if (field === 'password' && credentials.password.length === 0) {
+      setPasswordEntered(false);
+    }
   };
 
   const handleSubmit = () => {
@@ -44,7 +41,10 @@ const FormDrawer: React.FC<FormDrawerProps> = ({ open, onClose }) => {
     const rutParts = rut.split('-');
     if (rutParts.length === 2) {
       const [rutBody, verifier] = rutParts;
-      return calcularVerificador(rutBody.replace(/\./g, '')) === verifier && rutParts[0].length >= 8;
+      return (
+        calcularVerificador(rutBody.replace(/\./g, '')) === verifier &&
+        rutParts[0].length >= 8
+      );
     }
     return false;
   };
@@ -63,7 +63,7 @@ const FormDrawer: React.FC<FormDrawerProps> = ({ open, onClose }) => {
           backgroundColor: 'white',
           padding: 4,
           transition: 'transform 0.6s ease-in-out',
-        }
+        },
       }}
     >
       <Box
@@ -79,8 +79,11 @@ const FormDrawer: React.FC<FormDrawerProps> = ({ open, onClose }) => {
         <Typography variant="h5" gutterBottom>
           Ingresa a tu cuenta
         </Typography>
-        <RUTInput value={credentials.rut} onValueChange={(value) => handleChange('rut', value)} />
-        <PasswordInput 
+        <RUTInput
+          value={credentials.rut}
+          onValueChange={(value) => handleChange('rut', value)}
+        />
+        <PasswordInput
           value={credentials.password}
           onValueChange={(value) => handleChange('password', value)}
           onBlur={() => handleBlur('password')}
@@ -96,7 +99,7 @@ const FormDrawer: React.FC<FormDrawerProps> = ({ open, onClose }) => {
             width: '80%',
             '&:hover': {
               bgcolor: isValid ? '#3B1E54' : '#D4BEE4',
-            }
+            },
           }}
           onClick={handleSubmit}
           disabled={!isValid}

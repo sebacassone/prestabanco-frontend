@@ -31,7 +31,6 @@ const OverlayImage: React.FC = () => {
           alignItems: 'center',
         }}
       >
-        
         <Box
           sx={{
             textAlign: 'center',
@@ -47,12 +46,9 @@ const OverlayImage: React.FC = () => {
             Endeudate con nosotros y vive una experiencia financiera única.
           </Typography>
         </Box>
-      
       </Box>
     </Box>
   );
 };
-
-
 
 export default OverlayImage;

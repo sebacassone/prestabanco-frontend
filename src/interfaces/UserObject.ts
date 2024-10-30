@@ -10,17 +10,17 @@
  * @property {string} secondLastName - The user's second last name
  * @property {string} status - The user's status
  * @property {string} typeUser - The user's type
-    */
+ */
 interface user {
-    rut: string;
-    phone: string;
-    email: string;
-    birthday: string;
-    name:string;
-    firstLastName:string;
-    secondLastName:string;
-    status:string;
-    typeUser:string;
+  rut: string;
+  phone: string;
+  email: string;
+  birthday: string;
+  name: string;
+  firstLastName: string;
+  secondLastName: string;
+  status: string;
+  typeUser: string;
 }
 
 export default user;

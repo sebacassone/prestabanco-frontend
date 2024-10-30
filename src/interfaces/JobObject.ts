@@ -5,8 +5,8 @@
  * @property {string} activity - The activity of the job
  */
 interface Job {
-    seniorityJob: string;
-    activity: string;
+  seniorityJob: string;
+  activity: string;
 }
 
 export default Job;

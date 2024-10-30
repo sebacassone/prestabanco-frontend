@@ -1,11 +1,11 @@
 /**
  * This function validates the email format
- * @param value 
- * @returns 
+ * @param value - email
+ * @returns
  */
-const ValidateEmail = (value: string) => {
-    const emailRegex: { test: (arg0: string) => any; } = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(value);
-  };
+const ValidateEmail = (value: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(value);
+};
 
 export { ValidateEmail };

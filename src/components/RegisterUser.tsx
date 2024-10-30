@@ -1,4 +1,4 @@
-import { useState} from 'react';
+import { useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -13,7 +13,13 @@ import StepContent from './StepContent';
 import { OfLegalAge, ValidateDate } from '../utils/functions/ValidateDate';
 import { ValidateEmail } from '../utils/functions/ValidateEmail';
 
-const steps = ['Datos Personales', 'Dirección', 'Trabajo', 'Ingresos', 'Confirmación'];
+const steps = [
+  'Datos Personales',
+  'Dirección',
+  'Trabajo',
+  'Ingresos',
+  'Confirmación',
+];
 
 const UserForm: React.FC = () => {
   const [user, setUser] = useState<user>({
@@ -43,13 +49,15 @@ const UserForm: React.FC = () => {
   const handleNext = () => {
     if (activeStep < steps.length - 1 && activeStep === 0) {
       console.log(user);
-      if (user.rut.length !== 0 &&
+      if (
+        user.rut.length !== 0 &&
         user.phone.length !== 0 &&
         user.name.length !== 0 &&
         user.firstLastName.length !== 0 &&
         user.secondLastName.length !== 0 &&
         ValidateEmail(user.email) &&
-        ValidateDate(user.birthday) && OfLegalAge(user.birthday) &&
+        ValidateDate(user.birthday) &&
+        OfLegalAge(user.birthday) &&
         user.email.length !== 0
       ) {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -84,7 +92,9 @@ const UserForm: React.FC = () => {
     console.log('User Information:', user);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     const { name, value } = e.target;
     if (activeStep === 0) {
       if (name === 'phone') {
@@ -164,18 +174,34 @@ const UserForm: React.FC = () => {
             address={address}
             handleChange={handleChange}
           />
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              marginTop: '20px',
+            }}
+          >
             {activeStep > 0 && (
               <Button onClick={handleBack} sx={{ marginRight: '10px' }}>
                 Atrás
               </Button>
             )}
             {activeStep < steps.length - 1 ? (
-              <Button onClick={handleNext} variant="contained" color="primary" fullWidth>
+              <Button
+                onClick={handleNext}
+                variant="contained"
+                color="primary"
+                fullWidth
+              >
                 Siguiente
               </Button>
             ) : (
-              <Button type="submit" variant="contained" color="primary" fullWidth>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                fullWidth
+              >
                 Enviar
               </Button>
             )}

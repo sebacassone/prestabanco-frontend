@@ -7,7 +7,11 @@ import Clear from '@mui/icons-material/Clear';
 import { useState } from 'react';
 import RUTInputProps from '../interfaces/RutInput';
 
-const PasswordInput: React.FC<RUTInputProps> = ({ value, onValueChange, onBlur }) => {
+const PasswordInput: React.FC<RUTInputProps> = ({
+  value,
+  onValueChange,
+  onBlur,
+}) => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const handleTogglePasswordVisibility = () => {

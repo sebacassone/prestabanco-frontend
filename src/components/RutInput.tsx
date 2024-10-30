@@ -18,7 +18,10 @@ const RUTInput: React.FC<RUTInputProps> = ({ value, onValueChange, width }) => {
     }
     formattedValue = `${rutBody}-${verifier}`;
 
-    if (verifier.length === 0 || (verifier !== 'K' && isNaN(Number(verifier)))) {
+    if (
+      verifier.length === 0 ||
+      (verifier !== 'K' && isNaN(Number(verifier)))
+    ) {
       formattedValue = rutBody;
     }
 
@@ -29,7 +32,10 @@ const RUTInput: React.FC<RUTInputProps> = ({ value, onValueChange, width }) => {
     const rutParts = value.split('-');
     if (rutParts.length === 2) {
       const [rutBody, verifier] = rutParts;
-      if (calcularVerificador(rutBody.replace(/\./g, '')) !== verifier || rutParts[0].length < 8) {
+      if (
+        calcularVerificador(rutBody.replace(/\./g, '')) !== verifier ||
+        rutParts[0].length < 8
+      ) {
         setError('Error: Debes ingresar un RUT válido.');
       } else {
         setError('');
@@ -56,7 +62,7 @@ const RUTInput: React.FC<RUTInputProps> = ({ value, onValueChange, width }) => {
             borderRadius: '10px',
           },
         },
-        width: width? width:'80%',
+        width: width ? width : '80%',
       }}
       inputProps={{
         maxLength: 12,

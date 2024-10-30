@@ -8,11 +8,11 @@
  * @property {string} country - The country of the address
  */
 interface address {
-    street: string;
-    number: string;
-    commune: string;
-    region: string;
-    country: string;
+  street: string;
+  number: string;
+  commune: string;
+  region: string;
+  country: string;
 }
 
 export default address;

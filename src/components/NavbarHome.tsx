@@ -1,13 +1,13 @@
-import AppBar from "@mui/material/AppBar";
-import { useState, MouseEvent } from "react";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import Logo from "./Logo";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import SubMenu from "./Sidemenu";
-import {Fragment} from 'react';
-import FormDrawer from "./FormDrawerLogin";
+import AppBar from '@mui/material/AppBar';
+import { useState, MouseEvent } from 'react';
+import Box from '@mui/material/Box';
+import Toolbar from '@mui/material/Toolbar';
+import Logo from './Logo';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import SubMenu from './Sidemenu';
+import { Fragment } from 'react';
+import FormDrawer from './FormDrawerLogin';
 
 export default function NavbarHome() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -17,10 +17,10 @@ export default function NavbarHome() {
   // Lo que hace esto es que al hacer click en un botón, se abre un menú con opciones
   const handleClick = (event: MouseEvent<HTMLElement>, id: string) => {
     if (id === 'login') {
-        setDrawerOpen(true);
+      setDrawerOpen(true);
     } else {
-        setAnchorEl(event.currentTarget); // Se obtiene el elemento que se hizo click
-        setMenuId(id); // Se obtiene el id del menú que se abrió
+      setAnchorEl(event.currentTarget); // Se obtiene el elemento que se hizo click
+      setMenuId(id); // Se obtiene el id del menú que se abrió
     }
   };
 
@@ -32,13 +32,13 @@ export default function NavbarHome() {
 
   // Submenús
   const menuOptions = {
-    cuentas: ["Cuenta 1", "Cuenta 2"],
-    tarjetas: ["Tarjeta 1", "Tarjeta 2"],
-    creditos: ["Crédito 1", "Crédito 2"],
-    inversiones: ["Inversión 1", "Inversión 2"],
-    seguros: ["Seguro 1", "Seguro 2"],
-    oportunidades: ["Oportunidad 1", "Oportunidad 2"],
-    educacion: ["Educación 1", "Educación 2"]
+    cuentas: ['Cuenta 1', 'Cuenta 2'],
+    tarjetas: ['Tarjeta 1', 'Tarjeta 2'],
+    creditos: ['Crédito 1', 'Crédito 2'],
+    inversiones: ['Inversión 1', 'Inversión 2'],
+    seguros: ['Seguro 1', 'Seguro 2'],
+    oportunidades: ['Oportunidad 1', 'Oportunidad 2'],
+    educacion: ['Educación 1', 'Educación 2'],
   };
 
   // Botones que se van a generar con el .map
@@ -49,60 +49,71 @@ export default function NavbarHome() {
     { id: 'inversiones', label: 'INVERSIONES' },
     { id: 'seguros', label: 'SEGUROS' },
     { id: 'oportunidades', label: 'OPORTUNIDADES ÚNICAS' },
-    { id: 'educacion', label: 'EDUCACIÓN FINANCIERA' }
+    { id: 'educacion', label: 'EDUCACIÓN FINANCIERA' },
   ];
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static" sx={{ bgcolor: '#9B7EBD'}}>
-        <Toolbar sx={{ justifyContent: "center", alignItems: "center" }}>
+      <AppBar position="static" sx={{ bgcolor: '#9B7EBD' }}>
+        <Toolbar sx={{ justifyContent: 'center', alignItems: 'center' }}>
           <Logo />
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-           {/* Se hace un botón de Ingesar y de Abre tu cuenta */}
-            <Button variant="contained" sx={{ 
-                borderRadius: '20px', 
+            {/* Se hace un botón de Ingesar y de Abre tu cuenta */}
+            <Button
+              variant="contained"
+              sx={{
+                borderRadius: '20px',
                 border: '2px solid #EEEEEE',
-                color: 'white', 
-                backgroundColor: 'transparent', 
-                marginRight: '1em', 
+                color: 'white',
+                backgroundColor: 'transparent',
+                marginRight: '1em',
                 marginTop: '5em',
-                transition: 'all 0.3s ease', 
+                transition: 'all 0.3s ease',
                 '&:hover': {
-                    backgroundColor: 'rgba(255, 255, 255, 0.2)', 
+                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
                 },
                 '&:active': {
-                    transform: 'scale(0.95)', 
-                    backgroundColor: 'rgba(255, 255, 255, 0.1)', 
-                }
-                }}>
-                Abre tu cuenta
+                  transform: 'scale(0.95)',
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                },
+              }}
+            >
+              Abre tu cuenta
             </Button>
 
-            <Button variant="contained" sx={{ 
-                borderRadius: '20px', 
+            <Button
+              variant="contained"
+              sx={{
+                borderRadius: '20px',
                 border: '2px solid white',
-                bgcolor: '#EEEEEE', 
-                color: '#3B1E54', 
+                bgcolor: '#EEEEEE',
+                color: '#3B1E54',
                 marginTop: '5em',
-                transition: 'all 0.3s ease', 
+                transition: 'all 0.3s ease',
                 '&:hover': {
-                    backgroundColor: '#d9d9d9', 
+                  backgroundColor: '#d9d9d9',
                 },
                 '&:active': {
-                    transform: 'scale(0.95)', 
-                    backgroundColor: '#cccccc', 
-                }
-            }} onClick={(event) => handleClick(event, 'login')}>
-                Ingresar
+                  transform: 'scale(0.95)',
+                  backgroundColor: '#cccccc',
+                },
+              }}
+              onClick={(event) => handleClick(event, 'login')}
+            >
+              Ingresar
             </Button>
-
           </Box>
         </Toolbar>
-         <Toolbar sx={{ justifyContent: 'center' }}>
+        <Toolbar sx={{ justifyContent: 'center' }}>
           {buttons.map((button, index) => (
             <Fragment key={button.id}>
               <Button
-                sx={{ color: '#EEEEEE', transition: 'all 0.3s ease', '&:hover': { color: 'white' }, '&:active': { transform: 'scale(0.95)' }}}
+                sx={{
+                  color: '#EEEEEE',
+                  transition: 'all 0.3s ease',
+                  '&:hover': { color: 'white' },
+                  '&:active': { transform: 'scale(0.95)' },
+                }}
                 onClick={(event) => handleClick(event, button.id)}
               >
                 {button.label}

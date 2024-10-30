@@ -10,13 +10,15 @@ import Job from './JobObject';
  * @property {Address} address - The user's address
  * @property {Job} job - The user's job
  * @property {(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void} handleChange - The function that handles the change event
-  */
+ */
 interface StepContentProps {
   step: number;
   user: User;
   address: Address;
   job: Job;
-  handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  handleChange: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => void;
 }
 
 export default StepContentProps;
