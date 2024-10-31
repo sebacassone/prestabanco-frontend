@@ -165,9 +165,13 @@ const StepContent: React.FC<StepContentProps> = ({
             onChange={handleChange}
             required
           >
+            {' '}
             {Communes.regions.map((region) => (
-              <MenuItem value={region.name}>{region.name}</MenuItem>
-            ))}
+              <MenuItem key={region.abbreviation} value={region.abbreviation}>
+                {' '}
+                {region.name}{' '}
+              </MenuItem>
+            ))}{' '}
           </TextField>
           <TextField
             select
@@ -179,11 +183,15 @@ const StepContent: React.FC<StepContentProps> = ({
             onChange={handleChange}
             required
           >
+            {' '}
             {Communes.regions
-              .find((region) => region.name === address.region)
+              .find((region) => region.abbreviation === address.region)
               ?.communes.map((commune) => (
-                <MenuItem value={commune.name}>{commune.name}</MenuItem>
-              ))}
+                <MenuItem key={commune.identifier} value={commune.identifier}>
+                  {' '}
+                  {commune.name}{' '}
+                </MenuItem>
+              ))}{' '}
           </TextField>
           <TextField
             select

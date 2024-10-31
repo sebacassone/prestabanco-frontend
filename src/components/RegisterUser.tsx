@@ -106,7 +106,15 @@ const UserForm: React.FC = () => {
         setUser((prevUser) => ({ ...prevUser, [name]: value }));
       }
     } else if (activeStep === 1) {
-      setAddress((prevAddress) => ({ ...prevAddress, [name]: value }));
+      if (name === 'number') {
+        const rawValue = value.replace(/[^0-9]/g, '').toUpperCase();
+        setAddress((prevAddress) => ({ ...prevAddress, [name]: rawValue }));
+      } else if (name === 'street') {
+        const cleanedValue = value.replace(/[^a-zA-Z\s]/g, '');
+        setAddress((prevAddress) => ({ ...prevAddress, [name]: cleanedValue }));
+      } else {
+        setAddress((prevAddress) => ({ ...prevAddress, [name]: value }));
+      }
     } else if (activeStep === 2) {
       setJob((prevJob) => ({ ...prevJob, [name]: value }));
     }

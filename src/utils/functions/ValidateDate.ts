@@ -5,8 +5,28 @@
  */
 const ValidateDate = (date: string): boolean => {
   const year: string = date.split('-')[0];
+  const month: string = date.split('-')[1];
+  const day: string = date.split('-')[2];
+
+  const dateCurrent: string[] = new Date()
+    .toLocaleDateString('es-CL')
+    .split('-');
+  const yearCurrent: number = parseInt(dateCurrent[2]);
+  const monthCurrent: number = parseInt(dateCurrent[1]);
+  const dayCurrent: number = parseInt(dateCurrent[0]);
+
+  // Validate the date
   let validate: boolean = false;
-  if (year.length === 4 && parseInt(year) > 1900) {
+  if (
+    year.length === 4 &&
+    parseInt(year) > 1900 &&
+    parseInt(year) <= yearCurrent &&
+    (parseInt(year) < yearCurrent ||
+      (parseInt(year) === yearCurrent && parseInt(month) < monthCurrent) ||
+      (parseInt(year) === yearCurrent &&
+        parseInt(month) === monthCurrent &&
+        parseInt(day) <= dayCurrent))
+  ) {
     validate = true;
   }
   return validate;
