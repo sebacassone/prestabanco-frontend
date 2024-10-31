@@ -167,7 +167,7 @@ const StepContent: React.FC<StepContentProps> = ({
           >
             {' '}
             {Communes.regions.map((region) => (
-              <MenuItem key={region.abbreviation} value={region.abbreviation}>
+              <MenuItem key={region.abbreviation} value={region.name}>
                 {' '}
                 {region.name}{' '}
               </MenuItem>
@@ -185,9 +185,9 @@ const StepContent: React.FC<StepContentProps> = ({
           >
             {' '}
             {Communes.regions
-              .find((region) => region.abbreviation === address.region)
+              .find((region) => region.name === address.region)
               ?.communes.map((commune) => (
-                <MenuItem key={commune.identifier} value={commune.identifier}>
+                <MenuItem key={commune.identifier} value={commune.name}>
                   {' '}
                   {commune.name}{' '}
                 </MenuItem>
@@ -240,7 +240,7 @@ const StepContent: React.FC<StepContentProps> = ({
               error={Boolean(errorBirthday)}
               helperText={errorBirthday}
               onBlur={() => {
-                if (user.birthday.length === 0) {
+                if (job.seniorityJob.length === 0) {
                   setErrorBirthday('');
                 } else if (!ValidateDate(job.seniorityJob)) {
                   setErrorBirthday('Error: Debes ingresar una fecha válida.');

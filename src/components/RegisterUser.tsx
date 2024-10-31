@@ -81,6 +81,8 @@ const UserForm: React.FC = () => {
     // }
     if (activeStep < steps.length - 1) {
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      console.log(address);
+      console.log(job);
     } else {
       setActiveStep(0);
     }
