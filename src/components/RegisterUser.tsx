@@ -47,37 +47,42 @@ const UserForm: React.FC = () => {
   });
 
   const handleNext = () => {
-    if (activeStep < steps.length - 1 && activeStep === 0) {
-      console.log(user);
-      if (
-        user.rut.length !== 0 &&
-        user.phone.length !== 0 &&
-        user.name.length !== 0 &&
-        user.firstLastName.length !== 0 &&
-        user.secondLastName.length !== 0 &&
-        ValidateEmail(user.email) &&
-        ValidateDate(user.birthday) &&
-        OfLegalAge(user.birthday) &&
-        user.email.length !== 0
-      ) {
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
-      }
-    } else if (activeStep < steps.length - 1 && activeStep === 1) {
-      if (
-        address.street.length !== 0 &&
-        address.number.length !== 0 &&
-        address.commune.length !== 0 &&
-        address.region.length !== 0 &&
-        address.country.length !== 0
-      ) {
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
-      }
-    } else if (activeStep < steps.length - 1 && activeStep === 2) {
-      if (job.activity.length !== 0 && job.seniorityJob.length !== 0) {
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
-      }
-    } else {
+    // if (activeStep < steps.length - 1 && activeStep === 0) {
+    //   console.log(user);
+    //   if (
+    //     user.rut.length !== 0 &&
+    //     user.phone.length !== 0 &&
+    //     user.name.length !== 0 &&
+    //     user.firstLastName.length !== 0 &&
+    //     user.secondLastName.length !== 0 &&
+    //     ValidateEmail(user.email) &&
+    //     ValidateDate(user.birthday) &&
+    //     OfLegalAge(user.birthday) &&
+    //     user.email.length !== 0
+    //   ) {
+    //     setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    //   }
+    // } else if (activeStep < steps.length - 1 && activeStep === 1) {
+    //   if (
+    //     address.street.length !== 0 &&
+    //     address.number.length !== 0 &&
+    //     address.commune.length !== 0 &&
+    //     address.region.length !== 0 &&
+    //     address.country.length !== 0
+    //   ) {
+    //     setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    //   }
+    // } else if (activeStep < steps.length - 1 && activeStep === 2) {
+    //   if (job.activity.length !== 0 && job.seniorityJob.length !== 0) {
+    //     setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    //   }
+    // } else {
+    //   setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    // }
+    if (activeStep < steps.length - 1) {
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    } else {
+      setActiveStep(0);
     }
   };
 
@@ -112,6 +117,9 @@ const UserForm: React.FC = () => {
       } else if (name === 'street') {
         const cleanedValue = value.replace(/[^a-zA-Z\s]/g, '');
         setAddress((prevAddress) => ({ ...prevAddress, [name]: cleanedValue }));
+      } else if (name === 'region' && address.commune.length > 0) {
+        address.commune = '';
+        setAddress((prevAddress) => ({ ...prevAddress, [name]: value }));
       } else {
         setAddress((prevAddress) => ({ ...prevAddress, [name]: value }));
       }
