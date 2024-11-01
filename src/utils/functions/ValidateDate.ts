@@ -84,4 +84,4 @@ const OfLegalAge = (birthDateStr: string): boolean => {
   return calculateAge(formatDate(birthDateStr), currentDateStr) >= 18;
 };
 
-export { ValidateDate, OfLegalAge };
+export { ValidateDate, OfLegalAge, formatDate };

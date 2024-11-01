@@ -7,6 +7,7 @@ import FormDrawerProps from '../interfaces/FormDrawerLogin';
 import RUTInput from './RutInput';
 import PasswordInput from './PasswordComponent';
 import calcularVerificador from '../utils/functions/CalculateVerificator';
+import userService from '../services/user.service';
 
 const FormDrawer: React.FC<FormDrawerProps> = ({ open, onClose }) => {
   const [credentials, setCredentials] = useState({ rut: '', password: '' });
@@ -33,7 +34,22 @@ const FormDrawer: React.FC<FormDrawerProps> = ({ open, onClose }) => {
   const handleSubmit = () => {
     if (isValid) {
       console.log('Submitting:', credentials);
-      // Aquí puedes agregar la lógica para enviar las credenciales al backend
+
+      userService
+        .login({
+          rut: credentials.rut,
+          password: credentials.password,
+        })
+        .then((response) => {
+          console.log('Response:', response);
+          // save object in local storage
+          // redirect to home
+          localStorage.setItem('user', JSON.stringify(response.data));
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+      window.location.href = '/intranet';
     }
   };
 

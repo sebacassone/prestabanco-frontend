@@ -5,12 +5,22 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Clear from '@mui/icons-material/Clear';
 import { useState } from 'react';
-import RUTInputProps from '../interfaces/RutInput';
+import RUTInputProps from '../interfaces/PasswordInput';
 
+/**
+ * Component to handle the password input
+ * @param value - value of the input
+ * @param onValueChange - function to handle the change of the input
+ * @param onBlur - function to handle the blur of the input
+ * @returns
+ */
 const PasswordInput: React.FC<RUTInputProps> = ({
   value,
   onValueChange,
   onBlur,
+  width,
+  errorPassword,
+  nameComponent,
 }) => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
@@ -24,7 +34,7 @@ const PasswordInput: React.FC<RUTInputProps> = ({
 
   return (
     <TextField
-      label="Clave"
+      label={nameComponent ? nameComponent : 'Contraseña'}
       variant="outlined"
       type={showPassword ? 'text' : 'password'}
       fullWidth
@@ -32,6 +42,8 @@ const PasswordInput: React.FC<RUTInputProps> = ({
       value={value}
       onChange={(e) => onValueChange(e.target.value)}
       onBlur={onBlur}
+      error={errorPassword ? true : false}
+      helperText={errorPassword}
       InputProps={{
         endAdornment: (
           <InputAdornment position="end">
@@ -47,7 +59,7 @@ const PasswordInput: React.FC<RUTInputProps> = ({
       sx={{
         backgroundColor: '#F6F6F6',
         borderRadius: '10px',
-        width: '80%',
+        width: width ? width : '80%',
         '& .MuiOutlinedInput-root': {
           '& fieldset': {
             borderRadius: '10px',

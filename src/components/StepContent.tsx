@@ -13,16 +13,21 @@ import { ValidateEmail } from '../utils/functions/ValidateEmail';
 import { useState } from 'react';
 import { ValidateDate, OfLegalAge } from '../utils/functions/ValidateDate';
 import Communes from '../utils/json/communes.json';
+import PasswordComponent from './PasswordComponent';
 
 const StepContent: React.FC<StepContentProps> = ({
   step,
   user,
   address,
   job,
+  incomes,
   handleChange,
 }) => {
   const [errorEmail, setErrorEmail] = useState<string>('');
   const [errorBirthday, setErrorBirthday] = useState<string>('');
+  const [errorIncome, setErrorIncome] = useState<string[]>(Array(12).fill(''));
+  const [errorPassword, setErrorPassword] = useState<string>('');
+  const [PasswordConfirmation, setPasswordConfirmation] = useState<string>('');
   switch (step) {
     case 0:
       return (
@@ -253,6 +258,118 @@ const StepContent: React.FC<StepContentProps> = ({
           )}
         </div>
       );
+    case 3:
+      return (
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(4, 1fr)',
+            gap: '10px',
+          }}
+        >
+          {incomes.map((income, index) => (
+            <div
+              key={index}
+              style={{ display: 'flex', flexDirection: 'column' }}
+            >
+              <TextField
+                label={`Ingreso ${index + 1} - Fecha`}
+                name="date"
+                type="date"
+                fullWidth
+                margin="normal"
+                InputLabelProps={{ shrink: true }}
+                value={income.date}
+                error={Boolean(errorIncome[index])}
+                helperText={
+                  <span
+                    style={{
+                      height: '1rem',
+                      fontSize: '0.75rem',
+                      margin: '0',
+                      padding: '0',
+                      color: 'red',
+                    }}
+                  >
+                    {errorIncome[index] ? errorIncome[index] : '\u00A0'}{' '}
+                    {/* No-break space to keep height */}
+                  </span>
+                }
+                onChange={(e) => handleChange(e, index)}
+                onBlur={() => {
+                  if (!ValidateDate(income.date)) {
+                    setErrorIncome((prev) => {
+                      prev[index] = 'Error: Debes ingresar una fecha válida.';
+                      return [...prev];
+                    });
+                  } else {
+                    console.log('Valid date');
+                    setErrorIncome((prev) => {
+                      prev[index] = '';
+                      return [...prev];
+                    });
+                  }
+                }}
+                required
+              />
+              <TextField
+                label={`Ingreso ${index + 1} - Monto`}
+                name="amount"
+                fullWidth
+                margin="normal"
+                value={income.amount}
+                onChange={(e) => handleChange(e, index)}
+                required
+              />
+            </div>
+          ))}
+        </div>
+      );
+    case 4:
+      return (
+        <div>
+          <PasswordComponent
+            value={user.password}
+            onValueChange={(value) =>
+              handleChange({
+                target: { name: 'password', value },
+              } as React.ChangeEvent<HTMLInputElement>)
+            }
+            errorPassword={errorPassword}
+            width="100%"
+            onBlur={() => {
+              if (
+                PasswordConfirmation !== user.password &&
+                user.password !== '' &&
+                PasswordConfirmation !== ''
+              ) {
+                setErrorPassword('Error: Las contraseñas no coinciden.');
+              } else {
+                setErrorPassword('');
+              }
+            }}
+          />
+          <PasswordComponent
+            nameComponent="Confirmar contraseña"
+            value={PasswordConfirmation}
+            onValueChange={(value) => setPasswordConfirmation(value)}
+            width="100%"
+            errorPassword={errorPassword}
+            onBlur={() => {
+              if (
+                PasswordConfirmation !== user.password &&
+                user.password !== '' &&
+                PasswordConfirmation !== ''
+              ) {
+                setErrorPassword('Error: Las contraseñas no coinciden.');
+              } else {
+                setErrorPassword('');
+              }
+            }}
+          />
+        </div>
+      );
+
     default:
       return null;
   }

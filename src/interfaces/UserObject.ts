@@ -19,6 +19,7 @@ interface user {
   name: string;
   firstLastName: string;
   secondLastName: string;
+  password: string;
   status: string;
   typeUser: string;
 }

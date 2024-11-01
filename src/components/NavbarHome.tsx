@@ -77,6 +77,7 @@ export default function NavbarHome() {
                   backgroundColor: 'rgba(255, 255, 255, 0.1)',
                 },
               }}
+              onClick={() => (window.location.href = '/register-user')}
             >
               Abre tu cuenta
             </Button>
@@ -104,6 +105,7 @@ export default function NavbarHome() {
             </Button>
           </Box>
         </Toolbar>
+        {/* Esta es la parte de abajo */}
         <Toolbar sx={{ justifyContent: 'center' }}>
           {buttons.map((button, index) => (
             <Fragment key={button.id}>
