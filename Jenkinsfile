@@ -34,11 +34,11 @@ pipeline {
             steps {
                 script {
                     echo "Logging into DockerHub..."
-                    sh 'docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+                    // Inicio de sesión en DockerHub usando password-stdin
+                    sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
 
-                    docker.withRegistry('https://index.docker.io/v1/', DOCKERHUB_CREDENTIALS) {
-                        sh 'docker push $DOCKER_IMAGE'
-                    }
+                    // Empujar la imagen al repositorio DockerHub
+                    sh 'docker push $DOCKER_IMAGE'
                 }
             }
         }
