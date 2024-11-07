@@ -28,7 +28,7 @@ const ViewRequests: React.FC = () => {
     [key: number]: { [key: string]: File | null };
   }>({});
   const [verCredito, setVerCredito] = useState<number | null>(null);
-  const [loan, setLoan] = useState<LoansReponse[]>([]);
+  const [, setLoan] = useState<LoansReponse[]>([]);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
