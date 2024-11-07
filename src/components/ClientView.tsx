@@ -42,6 +42,11 @@ export default function MenuAppBar() {
     setAnchorEl(null);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    window.location.href = '/';
+  };
+
   const toggleDrawer =
     (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
       if (
@@ -64,8 +69,8 @@ export default function MenuAppBar() {
 
   const menuItems = [
     { text: 'Home', path: '/' },
-    { text: 'Register User', path: '/register-user' },
     { text: 'Credit Simulator', path: '/credit-simulator' },
+    { text: 'Ver Solicitudes', path: '/view-requests' },
     { text: 'Intranet', path: '/intranet' },
   ];
 
@@ -127,6 +132,12 @@ export default function MenuAppBar() {
                 sx={{ fontFamily: 'Roboto, sans-serif' }}
               >
                 My account
+              </MenuItem>
+              <MenuItem
+                onClick={handleLogout}
+                sx={{ fontFamily: 'Roboto, sans-serif' }}
+              >
+                Logout
               </MenuItem>
             </Menu>
           </div>

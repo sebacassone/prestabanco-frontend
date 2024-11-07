@@ -12,4 +12,8 @@ const save = (data: LeanState) => {
   return httpClient.post('/api/v1/loans/save-loan', data);
 };
 
-export default { calculate, save };
+const getLoans = (idRequest: number) => {
+  return httpClient.get(`/api/v1/loans/get-loan/${idRequest}`);
+};
+
+export default { calculate, save, getLoans };

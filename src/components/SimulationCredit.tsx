@@ -8,16 +8,18 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
+  InputAdornment,
   SelectChangeEvent,
 } from '@mui/material';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle'; // Usar un icono de Material UI
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LoanState from '../interfaces/LoanObject';
 import loanServices from '../services/loan.service';
 import ClientView from './ClientView';
+import requestService from '../services/request.service';
 
 const CreditSimulator: React.FC = () => {
-  const [idUser, setIdUser] = useState<number>(0);
-
+  const [requestSuccess, setRequestSuccess] = useState(false);
+  // Definir el estado para los datos del préstamo
   const [loan, setLoan] = useState<LoanState>({
     amountLoan: 0,
     typeLoan: '',
@@ -29,9 +31,25 @@ const CreditSimulator: React.FC = () => {
     administrationAmountLoan: 0,
     totalAmountLoan: 0,
     secureAmountLoan: 0,
+    maximumAmountPercentageLoan: 0,
   });
 
+  // Definir estado para los errores
+  const [errors, setErrors] = useState({
+    amountLoan: false,
+    numberOfPaymentsLoan: false,
+    maximumAmountPercentageLoan: false,
+    typeLoan: false,
+    dateConcession: false,
+  });
+
+  // Definir estado para el usuario (idUser)
+  const [idUser, setIdUser] = useState<number>(0);
+
+  // Estado para mostrar u ocultar resultados
   const [showResults, setShowResults] = useState(false);
+
+  // Estado para los resultados de la simulación
   const [simulationResult, setSimulationResult] = useState<LoanState>({
     amountLoan: 0,
     typeLoan: '',
@@ -43,39 +61,58 @@ const CreditSimulator: React.FC = () => {
     administrationAmountLoan: 0,
     totalAmountLoan: 0,
     secureAmountLoan: 0,
+    maximumAmountPercentageLoan: 0,
   });
 
+  // Función para manejar cambios en campos de texto
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
+
+    if (name === 'dateConcession') {
+      setLoan((prevLoan) => ({
+        ...prevLoan,
+        [name]: value,
+      }));
+      return;
+    }
+
     setLoan((prevLoan) => ({
       ...prevLoan,
       [name]:
         name === 'amountLoan' ||
         name === 'numberOfPaymentsLoan' ||
         name === 'quotaLoan' ||
-        name === 'interestRate' ||
+        name === 'interestLoan' ||
         name === 'administrationAmountLoan' ||
-        name === 'totalAmoutLoan' ||
-        name === 'secureAmountLoan'
+        name === 'totalAmountLoan' ||
+        name === 'secureAmountLoan' ||
+        name === 'maximumAmountPercentageLoan'
           ? value === ''
-            ? 0
-            : parseFloat(value)
-          : value,
+            ? ''
+            : parseFloat(value.replace(/[^\d]/g, '').replace(/^0+/, '')) // Convierte solo los números válidos
+          : value.replace(/^0+/, ''),
     }));
   };
 
+  // Función para manejar cambios en los campos del select
   const handleSelectChange = (e: SelectChangeEvent<string>) => {
     const { name, value } = e.target;
     setLoan((prevLoan) => ({
       ...prevLoan,
-      [name!]: value,
+      [name]: value,
     }));
   };
 
+  // Función para simular el crédito
   const handleSimulate = () => {
-    // Lógica para simular el crédito
+    // Validar el formulario antes de proceder con la simulación
+    if (!validateForm()) {
+      console.log('Formulario inválido');
+      return; // Si no es válido, no continuar
+    }
+
     console.log('Simular crédito con los siguientes datos:', loan);
     loanServices
       .calculate(loan)
@@ -89,20 +126,85 @@ const CreditSimulator: React.FC = () => {
       });
   };
 
+  // Función para realizar la solicitud del crédito
   const handleRequestLoan = async () => {
-    // Lógica para solicitar el crédito
-    console.log('Solicitar crédito con los siguientes datos:', loan);
-    const loanResponse = await loanServices.save(loan);
+    console.log(
+      'Solicitar crédito con los siguientes datos:',
+      simulationResult,
+    );
+    const loanResponse = await loanServices.save(simulationResult);
     console.log('Respuesta de la solicitud:', loanResponse);
+    await requestService.create(
+      'Pendiente de Documentación',
+      loanResponse.data.idLoan,
+      idUser,
+    );
+    setRequestSuccess(true);
   };
 
-  // Quiero obtener el usuario del localstorage
+  // Obtener el usuario desde el localStorage
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       setIdUser(JSON.parse(storedUser).idUser);
     }
-  });
+  }, []); // Dependencias vacías para que solo se ejecute una vez al montar
+
+  // Función para validar el formulario
+  const validateForm = (): boolean => {
+    const newErrors = {
+      amountLoan:
+        loan.amountLoan < 50000 ||
+        loan.amountLoan > 40000000 ||
+        isNaN(loan.amountLoan) ||
+        !Number.isInteger(Number(loan.amountLoan)),
+      numberOfPaymentsLoan:
+        loan.numberOfPaymentsLoan <= 0 ||
+        loan.numberOfPaymentsLoan > 100 ||
+        isNaN(loan.numberOfPaymentsLoan) ||
+        !Number.isInteger(Number(loan.numberOfPaymentsLoan)),
+      maximumAmountPercentageLoan:
+        loan.maximumAmountPercentageLoan < 0 ||
+        loan.maximumAmountPercentageLoan > 100 ||
+        isNaN(loan.maximumAmountPercentageLoan) ||
+        !Number.isInteger(Number(loan.maximumAmountPercentageLoan)),
+      typeLoan: loan.typeLoan === '',
+      dateConcession:
+        loan.dateConcession === '' ||
+        new Date(loan.dateConcession) <= new Date(),
+    };
+    console.log('Errores:', newErrors);
+
+    setErrors(newErrors);
+
+    // Si no hay errores, permitir continuar
+    return Object.values(newErrors).every((error) => !error);
+  };
+
+  if (requestSuccess) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          marginTop: 4,
+        }}
+      >
+        <Typography variant="h5" sx={{ marginBottom: 3 }}>
+          ¡Solicitud hecha con éxito!
+        </Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => (window.location.href = '/intranet')}
+        >
+          Ir a Intranet
+        </Button>
+      </Box>
+    );
+  }
 
   return (
     <>
@@ -158,19 +260,60 @@ const CreditSimulator: React.FC = () => {
               <TextField
                 label="Monto"
                 name="amountLoan"
-                value={loan.amountLoan}
+                value={loan.amountLoan === 0 ? '' : loan.amountLoan}
                 onChange={handleInputChange}
                 sx={{ marginBottom: 2 }}
                 fullWidth
-                helperText="Entre $50.000 y $40.000.000"
+                type="number"
+                error={errors.amountLoan}
+                helperText={
+                  errors.amountLoan
+                    ? 'Debe ser un valor entre $50.000 y $40.000.000'
+                    : 'Entre $50.000 y $40.000.000'
+                }
               />
               <TextField
                 label="Número de cuotas"
                 name="numberOfPaymentsLoan"
-                value={loan.numberOfPaymentsLoan}
+                value={
+                  loan.numberOfPaymentsLoan === 0
+                    ? ''
+                    : loan.numberOfPaymentsLoan
+                }
                 onChange={handleInputChange}
                 sx={{ marginBottom: 2 }}
                 fullWidth
+                type="number"
+                error={errors.numberOfPaymentsLoan}
+                helperText={
+                  errors.numberOfPaymentsLoan
+                    ? 'Debe ser un valor entre 1 y 100'
+                    : 'Entre 1 y 100'
+                }
+              />
+              <TextField
+                label="Porcentaje de Financiamiento"
+                name="maximumAmountPercentageLoan"
+                value={
+                  loan.maximumAmountPercentageLoan === 0
+                    ? ''
+                    : loan.maximumAmountPercentageLoan
+                }
+                onChange={handleInputChange}
+                sx={{ marginBottom: 2 }}
+                fullWidth
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">%</InputAdornment>
+                  ),
+                }}
+                type="number"
+                error={errors.maximumAmountPercentageLoan}
+                helperText={
+                  errors.maximumAmountPercentageLoan
+                    ? 'Debe ser un valor entre 0 y 100'
+                    : ''
+                }
               />
               <TextField
                 label="Fecha de primer vencimiento"
@@ -181,6 +324,9 @@ const CreditSimulator: React.FC = () => {
                 sx={{ marginBottom: 2 }}
                 InputLabelProps={{ shrink: true }}
                 fullWidth
+                inputProps={{
+                  min: new Date().toISOString().split('T')[0], // solo fechas futuras
+                }}
               />
               <FormControl fullWidth sx={{ marginBottom: 2 }}>
                 <InputLabel>Tipo de Préstamo</InputLabel>
@@ -188,6 +334,7 @@ const CreditSimulator: React.FC = () => {
                   name="typeLoan"
                   value={loan.typeLoan}
                   onChange={handleSelectChange}
+                  error={errors.typeLoan}
                 >
                   <MenuItem value="Primera Vivienda">Primera Vivienda</MenuItem>
                   <MenuItem value="Segunda Vivienda">Segunda Vivienda</MenuItem>
@@ -196,6 +343,11 @@ const CreditSimulator: React.FC = () => {
                   </MenuItem>
                   <MenuItem value="Remodelación">Remodelación</MenuItem>
                 </Select>
+                {errors.typeLoan && (
+                  <Typography color="error" variant="body2">
+                    Seleccione un tipo de préstamo
+                  </Typography>
+                )}
               </FormControl>
               <Typography variant="body2" sx={{ marginBottom: 3 }}>
                 *Los seguros asociados al crédito son voluntarios y puedes

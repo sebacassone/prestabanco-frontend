@@ -1,7 +1,8 @@
-interface LoanState {
+export interface LoansReponse {
+  idLoan: number;
   amountLoan: number;
+  dateConcession: string; // Assuming the date will be in string format based on the pattern provided
   typeLoan: string;
-  dateConcession: string;
   numberOfPaymentsLoan: number;
   quotaLoan: number;
   stateLoan: string;
@@ -12,4 +13,4 @@ interface LoanState {
   maximumAmountPercentageLoan: number;
 }
 
-export default LoanState;
+export default LoansReponse;

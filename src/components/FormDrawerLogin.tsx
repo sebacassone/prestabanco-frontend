@@ -8,11 +8,16 @@ import RUTInput from './RutInput';
 import PasswordInput from './PasswordComponent';
 import calcularVerificador from '../utils/functions/CalculateVerificator';
 import userService from '../services/user.service';
+import { useNavigate } from 'react-router-dom';
 
 const FormDrawer: React.FC<FormDrawerProps> = ({ open, onClose }) => {
   const [credentials, setCredentials] = useState({ rut: '', password: '' });
   const [isValid, setIsValid] = useState(false);
   const [passwordEntered, setPasswordEntered] = useState(false);
+  const navigate = useNavigate();
+  const handleRedirect = () => {
+    navigate('/intranet');
+  };
 
   useEffect(() => {
     setIsValid(validateRUT(credentials.rut) && passwordEntered);
@@ -31,25 +36,27 @@ const FormDrawer: React.FC<FormDrawerProps> = ({ open, onClose }) => {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    console.log('Submitting:', credentials);
+    console.log(isValid);
     if (isValid) {
       console.log('Submitting:', credentials);
 
-      userService
+      await userService
         .login({
           rut: credentials.rut,
           password: credentials.password,
         })
-        .then((response) => {
+        .then(async (response) => {
           console.log('Response:', response);
           // save object in local storage
           // redirect to home
-          localStorage.setItem('user', JSON.stringify(response.data));
+          await localStorage.setItem('user', JSON.stringify(response.data));
         })
         .catch((error) => {
           console.error('Error:', error);
         });
-      window.location.href = '/intranet';
+      handleRedirect();
     }
   };
 

@@ -13,6 +13,7 @@ import { useEffect, useState } from 'react';
 import ClientView from './components/ClientView';
 import ExecutiveView from './components/ExecutiveView';
 import userObject from './interfaces/UserObject';
+import ViewRequests from './components/viewRequests';
 
 function App() {
   const [userType, setUserType] = useState<string>('');
@@ -39,6 +40,7 @@ function App() {
           <Route path="*" element={<NotFound />} />
           <Route path="/register-user" element={<RegisterUser />} />
           <Route path="/credit-simulator" element={<SimulationCredit />} />
+          <Route path="/view-requests" element={<ViewRequests />} />
           <Route
             path="/intranet"
             element={

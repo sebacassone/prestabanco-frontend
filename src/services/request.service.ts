@@ -1,23 +1,49 @@
 import { AxiosResponse } from 'axios';
-import RequestObject from '../interfaces/RequestObject';
 import httpClient from '../http-common';
 import ResponseRequest from '../interfaces/ResponseRequest';
+import ResponseRequestUser from '../interfaces/ResponseRequestUser';
 
 const create = (
-  data: RequestObject,
+  data: string,
   idLean: number,
   idUser: number,
 ): Promise<AxiosResponse<ResponseRequest>> => {
   const payload = {
-    typeRequest: data.typeRequest,
-    stateRequest: data.stateRequest,
-    idLoan: idLean,
-    idUser: idUser,
+    stateRequest: data,
+    leanRequest: idLean,
+    userRequest: idUser,
   };
   return httpClient.post<ResponseRequest>(
-    '/api/v1/request/create-request',
+    '/api/v1/requests/save-request',
     payload,
   );
 };
 
-export default { create };
+const getRequests = (
+  idUser: number,
+): Promise<AxiosResponse<ResponseRequestUser[]>> => {
+  return httpClient.get<ResponseRequestUser[]>(
+    `/api/v1/requests/get-request/${idUser}`,
+  );
+};
+
+const updateState = (
+  data: string,
+  idRequest: number,
+): Promise<AxiosResponse<ResponseRequest>> => {
+  const payload = {
+    stateRequest: data,
+  };
+  return httpClient.put<ResponseRequest>(
+    `/api/v1/requests/update-state-request/${idRequest}`,
+    payload,
+  );
+};
+
+const getAllRequests = (): Promise<AxiosResponse<ResponseRequestUser[]>> => {
+  return httpClient.get<ResponseRequestUser[]>(
+    '/api/v1/requests/get-all-requests',
+  );
+};
+
+export default { create, getRequests, updateState, getAllRequests };
