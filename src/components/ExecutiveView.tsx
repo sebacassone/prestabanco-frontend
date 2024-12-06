@@ -69,7 +69,7 @@ export default function MenuAppBar() {
 
   const menuItems = [
     { text: 'Home', path: '/' },
-    { text: 'Ver Solicitudes de Clientes', path: '/view-requests' },
+    { text: 'Ver Solicitudes de Clientes', path: '/view-all-requests' },
     { text: 'Intranet', path: '/intranet' },
   ];
 

@@ -5,8 +5,6 @@ pipeline {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
         DOCKER_IMAGE = 'sebacassone/prestabanco-frontend'
         VITE_PAYROLL_BACKEND_SERVER = 'nginx'
-        VITE_PAYROLL_BACKEND_PORT = '8000'
-        PUBLIC_URL = 'nginx'
     }
 
     stages {
@@ -22,8 +20,6 @@ pipeline {
                     sh '''
                         docker build \
                         --build-arg VITE_PAYROLL_BACKEND_SERVER=$VITE_PAYROLL_BACKEND_SERVER \
-                        --build-arg VITE_PAYROLL_BACKEND_PORT=$VITE_PAYROLL_BACKEND_PORT \
-                        --build-arg PUBLIC_URL=$PUBLIC_URL \
                         -t $DOCKER_IMAGE .
                     '''
                 }

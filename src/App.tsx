@@ -14,6 +14,7 @@ import ClientView from './components/ClientView';
 import ExecutiveView from './components/ExecutiveView';
 import userObject from './interfaces/UserObject';
 import ViewRequests from './components/viewRequests';
+import ViewAllRequests from './components/viewAllRequests';
 
 function App() {
   const [userType, setUserType] = useState<string>('');
@@ -41,6 +42,7 @@ function App() {
           <Route path="/register-user" element={<RegisterUser />} />
           <Route path="/credit-simulator" element={<SimulationCredit />} />
           <Route path="/view-requests" element={<ViewRequests />} />
+          <Route path="/view-all-requests" element={<ViewAllRequests />} />
           <Route
             path="/intranet"
             element={

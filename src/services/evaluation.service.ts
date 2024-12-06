@@ -5,13 +5,13 @@ import EvaluationsResponse from '../interfaces/EvaluationsResponse';
 const makeEvaluation = (
   idUser: number,
   quotaLoan: number,
-  maxiumAmount: number,
+  maximumAmount: number,
   typeLoan: string,
 ): Promise<AxiosResponse<EvaluationsResponse>> => {
   const payload = {
     idUser: idUser,
-    quotaLoan: quotaLoan,
-    maxiumAmount: maxiumAmount,
+    quotaLoan: parseFloat(quotaLoan.toString()),
+    maximumAmount: parseFloat(maximumAmount.toString()),
     typeLoan: typeLoan,
   };
   console.log('Payload:', payload);

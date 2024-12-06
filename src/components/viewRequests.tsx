@@ -66,7 +66,7 @@ const ViewRequests: React.FC = () => {
     }));
   };
 
-  const handleEnviar = (id: number) => {
+  const handleEnviar = async (id: number) => {
     console.log('Documentos enviados:', documentos[id]);
 
     if (documentos[id]) {
@@ -77,44 +77,47 @@ const ViewRequests: React.FC = () => {
         }
       });
 
-      // Update the state to 'En evaluación' and make the evaluation
-      requestService.updateState('En evaluación', id).then((response) => {
-        console.log('Solicitud enviada:', response.data);
-        setSolicitudes((prevSolicitudes) =>
-          prevSolicitudes.map((solicitud) =>
-            solicitud.idRequest === id
-              ? { ...solicitud, stateRequest: 'En evaluación' }
-              : solicitud,
-          ),
-        );
-      });
-
-      // Make the evaluation
       const solicitud = solicitudes.find((sol) => sol.idRequest === id);
       if (solicitud) {
-        evaluationService
-          .makeEvaluation(
+        try {
+          const evalResponse = await evaluationService.makeEvaluation(
             idUser,
-            solicitud.loanRequest?.quotaLoan ?? 0,
-            solicitud.loanRequest?.maximumAmountPercentageLoan ?? 0,
+            solicitud.leanRequest?.quotaLoan ?? 0,
+            solicitud.leanRequest?.maximumAmountPercentageLoan ?? 0,
             solicitud.typeLoan,
-          )
-          .then((response) => {
-            console.log('Evaluación realizada:', response.data);
-          })
-          .catch((error) => {
-            console.error('Error al realizar la evaluación:', error);
-          });
+          );
+
+          await requestService.updateState(
+            'En evaluación',
+            id,
+            evalResponse.data.idEvaluation,
+          );
+          setSolicitudes((prevSolicitudes) =>
+            prevSolicitudes.map((solicitud) =>
+              solicitud.idRequest === id
+                ? {
+                    ...solicitud,
+                    stateRequest: 'En evaluación',
+                  }
+                : solicitud,
+            ),
+          );
+        } catch (error) {
+          console.error(
+            'Error al realizar la evaluación o actualizar el estado:',
+            error,
+          );
+        }
       }
     }
   };
 
   const handleAceptar = (id: number) => {
-    requestService.updateState('Aceptada', id).then(() => {
+    requestService.updateState('En Aprobación Final', id).then(() => {
       setSolicitudes((prevSolicitudes) =>
         prevSolicitudes.map((solicitud) =>
           solicitud.idRequest === id
-            ? { ...solicitud, stateRequest: 'Aprobado' }
+            ? { ...solicitud, stateRequest: 'En Aprobación Final' }
             : solicitud,
         ),
       );
@@ -124,7 +127,7 @@ const ViewRequests: React.FC = () => {
   };
 
   const handleCancelar = (id: number) => {
-    requestService.updateState('Aceptada', id).then(() => {
+    requestService.updateState('Cancelado por el cliente', id).then(() => {
       setSolicitudes((prevSolicitudes) =>
         prevSolicitudes.map((solicitud) =>
           solicitud.idRequest === id
@@ -135,6 +138,10 @@ const ViewRequests: React.FC = () => {
     });
 
     setVerCredito(null);
+  };
+
+  const handleViewDocuments = (id: number) => {
+    console.log('Ver documentos for request ID:', id);
   };
 
   return (
@@ -188,11 +195,25 @@ const ViewRequests: React.FC = () => {
                       </Button>
                     </Box>
                   )}
+                  {[
+                    'Preaprobada',
+                    'Aprobado',
+                    'En Desembolso',
+                    'Solicitud Aprobada y Desembolsada',
+                  ].includes(solicitud.stateRequest) && (
+                    <Button
+                      variant="outlined"
+                      onClick={() => handleViewDocuments(solicitud.idRequest)}
+                    >
+                      Ver Documentos
+                    </Button>
+                  )}
                   {solicitud.stateRequest === 'Preaprobada' && (
                     <Button
                       variant="contained"
                       color="secondary"
                       onClick={() => setVerCredito(solicitud.idRequest)}
+                      style={{ marginLeft: '10px' }}
                     >
                       Ver Crédito
                     </Button>

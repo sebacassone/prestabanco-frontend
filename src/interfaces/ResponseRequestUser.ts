@@ -6,8 +6,8 @@ interface ResponseRequestUser {
   stateRequest: string;
   typeLoan: string;
   documentsRequired?: string[];
-  evaluations?: EvaluationsResponse;
-  loanRequest?: LoansReponse;
+  evaluation?: EvaluationsResponse;
+  leanRequest?: LoansReponse;
 }
 
 export default ResponseRequestUser;

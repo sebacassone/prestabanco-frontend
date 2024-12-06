@@ -28,8 +28,6 @@ COPY --from=build /usr/src/app/dist /usr/share/nginx/html
 COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf
 
 ENV VITE_PAYROLL_BACKEND_SERVER=$VITE_PAYROLL_BACKEND_SERVER
-ENV VITE_PAYROLL_BACKEND_PORT=$VITE_PAYROLL_BACKEND_PORT
-ENV PUBLIC_URL=$PUBLIC_URL 
 
 # Expone el puerto 3000
 EXPOSE 80 

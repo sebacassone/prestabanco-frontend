@@ -30,12 +30,14 @@ const getRequests = (
 const updateState = (
   data: string,
   idRequest: number,
+  idEvaluation?: number,
 ): Promise<AxiosResponse<ResponseRequest>> => {
   const payload = {
     stateRequest: data,
+    idEvaluation: idEvaluation,
   };
   return httpClient.put<ResponseRequest>(
-    `/api/v1/requests/update-state-request/${idRequest}`,
+    `/api/v1/requests/update-request/${idRequest}`,
     payload,
   );
 };
