@@ -12,7 +12,4 @@ console.log(payrollBackendServer);
 
 export default axios.create({
   baseURL: `http://${payrollBackendServer}`,
-  headers: {
-    'Content-Type': 'application/json',
-  },
 });
