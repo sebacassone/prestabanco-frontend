@@ -12,16 +12,22 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  Typography,
 } from '@mui/material';
 import requestService from '../services/request.service';
 import ResponseRequestUser from '../interfaces/ResponseRequestUser';
 import ExecutiveView from './ExecutiveView';
+import documentService from '../services/document.service';
 
 const ViewAllRequests: React.FC = () => {
   const [solicitudes, setSolicitudes] = useState<ResponseRequestUser[]>([]);
   const [verCredito, setVerCredito] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
+  const [openDocsDialog, setOpenDocsDialog] = useState(false);
+  const [docsForRequest, setDocsForRequest] = useState<
+    { id: number; name: string; url: string }[]
+  >([]);
 
   useEffect(() => {
     console.log('useEffect triggered');
@@ -74,12 +80,58 @@ const ViewAllRequests: React.FC = () => {
     });
 
     try {
-      //await requestService.uploadDocument(id, formData);
+      await documentService.uploadDocuments(id, formData);
+      alert('Documentos subidos con éxito');
       await handleStateUpdate(id, 'Aprobado');
     } catch (error) {
+      alert('Error al subir documentos');
       console.error('Error uploading document:', error);
     } finally {
       setSelectedFiles(null);
+    }
+  };
+
+  const handleViewDocuments = async (id: number) => {
+    try {
+      const response = await documentService.getDocumentsByRequestId(id);
+      const documents = response.data.map((doc: any) => ({
+        id: doc.idDocument,
+        name: doc.fileName,
+        url: `/api/v1/documents/download/${doc.idDocument}`,
+      }));
+      console.log(documents);
+      setDocsForRequest(documents);
+      setOpenDocsDialog(true);
+    } catch (error) {
+      console.error('Error al obtener documentos:', error);
+    }
+  };
+
+  const handleDownloadDocument = async (idDocument: number) => {
+    try {
+      const response = await documentService.downloadDocument(idDocument);
+
+      // Crear una URL para descargar el archivo
+      const blob = new Blob([response.data], {
+        type: response.headers['content-type'],
+      });
+      const url = window.URL.createObjectURL(blob);
+
+      // Crear un enlace temporal para descargar
+      const link = document.createElement('a');
+      link.href = url;
+      link.download =
+        response.headers['content-disposition']
+          ?.split('filename=')[1]
+          ?.replace(/"/g, '') || 'document';
+      document.body.appendChild(link);
+      link.click();
+
+      // Limpiar recursos
+      link.parentNode?.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error al descargar el documento:', error);
     }
   };
 
@@ -120,7 +172,7 @@ const ViewAllRequests: React.FC = () => {
                   ].includes(solicitud.stateRequest) && (
                     <Button
                       variant="outlined"
-                      onClick={() => console.log('Ver documentos')}
+                      onClick={() => handleViewDocuments(solicitud.idRequest)}
                     >
                       Ver Documentos
                     </Button>
@@ -242,6 +294,35 @@ const ViewAllRequests: React.FC = () => {
           </DialogActions>
         </Dialog>
       )}
+      <Dialog
+        open={openDocsDialog}
+        onClose={() => setOpenDocsDialog(false)}
+        fullWidth
+        maxWidth="sm"
+      >
+        <DialogTitle>Documentos de la Solicitud</DialogTitle>
+        <DialogContent>
+          {docsForRequest.length > 0 ? (
+            <ul>
+              {docsForRequest.map((doc) => (
+                <li key={doc.id}>
+                  <Button
+                    variant="text"
+                    onClick={() => handleDownloadDocument(doc.id)}
+                  >
+                    {doc.name}
+                  </Button>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <Typography>No hay documentos disponibles.</Typography>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDocsDialog(false)}>Cerrar</Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
