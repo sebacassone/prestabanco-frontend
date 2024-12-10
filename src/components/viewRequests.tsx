@@ -45,6 +45,7 @@ const ViewRequests: React.FC = () => {
   useEffect(() => {
     if (idUser !== 0) {
       requestService.getRequests(idUser).then((response) => {
+        console.log(response.data);
         setSolicitudes(response.data);
       });
     }
@@ -103,12 +104,13 @@ const ViewRequests: React.FC = () => {
       });
 
       const solicitud = solicitudes.find((sol) => sol.idRequest === id);
+      console.log("solicitud ", solicitud);
       if (solicitud) {
         try {
           const evalResponse = await evaluationService.makeEvaluation(
             idUser,
-            solicitud.leanRequest?.quotaLoan ?? 0,
-            solicitud.leanRequest?.maximumAmountPercentageLoan ?? 0,
+            solicitud.loan?.quotaLoan ?? 0,
+            solicitud.loan?.maximumAmountPercentageLoan ?? 0,
             solicitud.typeLoan,
           );
 
@@ -306,47 +308,47 @@ const ViewRequests: React.FC = () => {
         >
           <DialogTitle id="form-dialog-title">Detalle del Crédito</DialogTitle>
           <DialogContent>
-            {verCredito.leanRequest && (
+            {verCredito.loan && (
               <>
                 {' '}
                 <Typography variant="h6">
                   Información del Préstamo
                 </Typography>{' '}
                 <Typography>
-                  ID del Préstamo: {verCredito.leanRequest.idLoan}
+                  ID del Préstamo: {verCredito.loan.idLoan}
                 </Typography>{' '}
                 <Typography>
-                  Monto del Préstamo: {verCredito.leanRequest.amountLoan}
+                  Monto del Préstamo: {verCredito.loan.amountLoan}
                 </Typography>{' '}
                 <Typography>
-                  Fecha de Concesión: {verCredito.leanRequest.dateConcession}
+                  Fecha de Concesión: {verCredito.loan.dateConcession}
                 </Typography>{' '}
                 <Typography>
-                  Interés del Préstamo: {verCredito.leanRequest.interestLoan}
+                  Interés del Préstamo: {verCredito.loan.interestLoan}
                 </Typography>{' '}
                 <Typography>
                   Porcentaje Máximo de Financiamiento:{' '}
-                  {verCredito.leanRequest.maximumAmountPercentageLoan}
+                  {verCredito.loan.maximumAmountPercentageLoan}
                 </Typography>{' '}
                 <Typography>
-                  Número de Pagos: {verCredito.leanRequest.numberOfPaymentsLoan}
+                  Número de Pagos: {verCredito.loan.numberOfPaymentsLoan}
                 </Typography>{' '}
                 <Typography>
-                  Cuota del Préstamo: {verCredito.leanRequest.quotaLoan}
+                  Cuota del Préstamo: {verCredito.loan.quotaLoan}
                 </Typography>{' '}
                 <Typography>
                   Monto Total del Préstamo:{' '}
-                  {verCredito.leanRequest.totalAmountLoan}
+                  {verCredito.loan.totalAmountLoan}
                 </Typography>{' '}
                 <Typography>
-                  Monto del Seguro: {verCredito.leanRequest.secureAmountLoan}
+                  Monto del Seguro: {verCredito.loan.secureAmountLoan}
                 </Typography>{' '}
                 <Typography>
                   Monto de Administración:{' '}
-                  {verCredito.leanRequest.administrationAmountLoan}
+                  {verCredito.loan.administrationAmountLoan}
                 </Typography>{' '}
                 <Typography>
-                  Tipo de Préstamo: {verCredito.leanRequest.typeLoan}
+                  Tipo de Préstamo: {verCredito.loan.typeLoan}
                 </Typography>{' '}
               </>
             )}

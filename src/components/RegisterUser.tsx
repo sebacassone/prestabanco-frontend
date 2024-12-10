@@ -119,6 +119,7 @@ const UserForm: React.FC = () => {
         // Call the management service and get the answer.
         const addressResponse = await AdressService.create(address);
         const addressId = addressResponse.data.idAddress;
+        console.log('Address ID:', addressId);
 
         // Call the user service using the address ID and get the answer.
         const userResponse = await UserService.create(user, addressId);
