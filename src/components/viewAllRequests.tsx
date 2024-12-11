@@ -148,11 +148,12 @@ const ViewAllRequests: React.FC = () => {
               <TableCell>Estado</TableCell>
               <TableCell>Documentos</TableCell>
               <TableCell>Cuota/Ingreso</TableCell>
-              <TableCell>Crédito del Cliente</TableCell>
+              <TableCell>Historial Crediticio del Cliente</TableCell>
               <TableCell>Evaluación de Antigüedad</TableCell>
               <TableCell>Deuda/Ingreso</TableCell>
               <TableCell>Monto Máximo de Financiación</TableCell>
               <TableCell>Edad del Solicitante</TableCell>
+              <TableCell>Capacidad de Ahorro</TableCell>
               <TableCell>Acciones</TableCell>
             </TableRow>
           </TableHead>
@@ -201,6 +202,7 @@ const ViewAllRequests: React.FC = () => {
                 <TableCell>
                   {solicitud.evaluation?.ageApplicant ? 'Sí' : 'No'}
                 </TableCell>
+                <TableCell>Sí</TableCell>
                 <TableCell>
                   {solicitud.stateRequest === 'En evaluación' ? (
                     <>

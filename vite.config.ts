@@ -8,6 +8,6 @@ export default defineConfig({
     sourcemap: true, // Habilita source maps para el build
   },
   server: {
-    // Habilita source maps para el servidor de desarrollo
+    port: 9000,
   },
 });

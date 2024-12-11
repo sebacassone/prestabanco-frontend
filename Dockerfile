@@ -13,6 +13,9 @@ RUN npm install
 # Copia el resto de los archivos
 COPY . .
 
+ARG VITE_PAYROLL_BACKEND_SERVER
+ENV VITE_PAYROLL_BACKEND_SERVER=${VITE_PAYROLL_BACKEND_SERVER}
+
 # Construye la aplicación
 RUN npm run build
 
@@ -26,8 +29,6 @@ COPY --from=build /usr/src/app/dist /usr/share/nginx/html
 # Copiar desde la "Etapa" build el contenido de la carpeta la 
 # configuracion de nginx dentro del directorio indicado en nginx
 COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf
-
-ENV VITE_PAYROLL_BACKEND_SERVER=$VITE_PAYROLL_BACKEND_SERVER
 
 # Expone el puerto 3000
 EXPOSE 80 
