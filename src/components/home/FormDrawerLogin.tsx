@@ -3,11 +3,11 @@ import Drawer from '@mui/material/Drawer';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import FormDrawerProps from '../interfaces/FormDrawerLogin';
-import RUTInput from './RutInput';
-import PasswordInput from './PasswordComponent';
-import calcularVerificador from '../utils/functions/CalculateVerificator';
-import userService from '../services/user.service';
+import FormDrawerProps from '../../interfaces/FormDrawerLogin';
+import RUTInput from '../RutInput';
+import PasswordInput from '../PasswordComponent';
+import calcularVerificador from '../../utils/functions/CalculateVerificator';
+import userService from '../../services/user.service';
 
 const FormDrawer: React.FC<FormDrawerProps> = ({ open, onClose }) => {
   const [credentials, setCredentials] = useState({ rut: '', password: '' });

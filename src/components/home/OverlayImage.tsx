@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import Overlay from '../assets/images/overlay.png';
+import Overlay from '../../assets/images/overlay.png';
 
 const OverlayImage: React.FC = () => {
   return (

@@ -1,7 +1,7 @@
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import PromoCardProps from '../interfaces/PromoCardHome';
+import PromoCardProps from '../../interfaces/PromoCardHome';
 
 const PromoCard: React.FC<PromoCardProps> = ({
   title,

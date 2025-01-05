@@ -15,11 +15,11 @@ import {
   Box,
   Typography,
 } from '@mui/material';
-import ClientView from './ClientView';
-import requestService from '../services/request.service';
-import documentService from '../services/document.service';
-import evaluationService from '../services/evaluation.service';
-import ResponseRequestUser from '../interfaces/ResponseRequestUser';
+import ClientView from '../ClientView';
+import requestService from '../../../services/request.service';
+import documentService from '../../../services/document.service';
+import evaluationService from '../../../services/evaluation.service';
+import ResponseRequestUser from '../../../interfaces/ResponseRequestUser';
 
 const ViewRequests: React.FC = () => {
   const [idUser, setIdUser] = useState<number>(0);
@@ -104,7 +104,7 @@ const ViewRequests: React.FC = () => {
       });
 
       const solicitud = solicitudes.find((sol) => sol.idRequest === id);
-      console.log("solicitud ", solicitud);
+      console.log('solicitud ', solicitud);
       if (solicitud) {
         try {
           const evalResponse = await evaluationService.makeEvaluation(
@@ -337,8 +337,7 @@ const ViewRequests: React.FC = () => {
                   Cuota del Préstamo: {verCredito.loan.quotaLoan}
                 </Typography>{' '}
                 <Typography>
-                  Monto Total del Préstamo:{' '}
-                  {verCredito.loan.totalAmountLoan}
+                  Monto Total del Préstamo: {verCredito.loan.totalAmountLoan}
                 </Typography>{' '}
                 <Typography>
                   Monto del Seguro: {verCredito.loan.secureAmountLoan}

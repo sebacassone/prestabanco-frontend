@@ -2,7 +2,7 @@ import AppBar from '@mui/material/AppBar';
 import { useState, MouseEvent } from 'react';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
-import Logo from './Logo';
+import Logo from '../Logo';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import SubMenu from './Sidemenu';

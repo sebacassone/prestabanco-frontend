@@ -14,7 +14,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
 import { Link } from 'react-router-dom';
-import user from '../interfaces/ResponseUser';
+import user from '../../interfaces/ResponseUser';
 
 export default function MenuAppBar() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -143,6 +143,7 @@ export default function MenuAppBar() {
           </div>
         </Toolbar>
       </AppBar>
+
       <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer(false)}>
         <List sx={{ width: 250 }}>
           {menuItems.map((item) => (

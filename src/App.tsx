@@ -4,17 +4,18 @@ import {
   Routes,
   Navigate,
 } from 'react-router-dom';
-import Home from './components/Home';
+import Home from './components/home/Home';
 import './App.css';
 import NotFound from './components/NotFound';
-import RegisterUser from './components/RegisterUser';
-import SimulationCredit from './components/SimulationCredit';
+import RegisterUser from './components/register/RegisterUser';
+import SimulationCredit from './components/intranet/simulation/SimulationCredit';
 import { useEffect, useState } from 'react';
-import ClientView from './components/ClientView';
-import ExecutiveView from './components/ExecutiveView';
+import ClientView from './components/intranet/ClientView';
+import ExecutiveView from './components/intranet/ExecutiveView';
 import userObject from './interfaces/UserObject';
-import ViewRequests from './components/viewRequests';
-import ViewAllRequests from './components/viewAllRequests';
+import ViewRequests from './components/intranet/requests/viewRequests';
+import ViewAllRequests from './components/intranet/requests/viewAllRequests';
+import CatWithMoney from './components/loading/index';
 
 function App() {
   const [userType, setUserType] = useState<string>('');
@@ -30,7 +31,11 @@ function App() {
   }, []);
 
   if (isLoading) {
-    return <div>Loading...</div>; // O cualquier componente de carga que prefieras
+    return (
+      <div>
+        <CatWithMoney />
+      </div>
+    ); // O cualquier componente de carga que prefieras
   }
 
   return (

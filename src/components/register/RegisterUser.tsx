@@ -5,18 +5,18 @@ import Typography from '@mui/material/Typography';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
-import Background from '../assets/images/background-ob-cmr-cl.jpg';
-import user from '../interfaces/UserObject';
-import address from '../interfaces/AddressObject';
-import job from '../interfaces/JobObject';
+import Background from '../../assets/images/background-ob-cmr-cl.jpg';
+import user from '../../interfaces/UserObject';
+import address from '../../interfaces/AddressObject';
+import job from '../../interfaces/JobObject';
 import StepContent from './StepContent';
-import { OfLegalAge, ValidateDate } from '../utils/functions/ValidateDate';
-import { ValidateEmail } from '../utils/functions/ValidateEmail';
-import Incomes from '../interfaces/IncomesObject';
-import AdressService from '../services/address.service';
-import JobService from '../services/job.service';
-import UserService from '../services/user.service';
-import IncomesService from '../services/incomes.service';
+import { OfLegalAge, ValidateDate } from '../../utils/functions/ValidateDate';
+import { ValidateEmail } from '../../utils/functions/ValidateEmail';
+import Incomes from '../../interfaces/IncomesObject';
+import AdressService from '../../services/address.service';
+import JobService from '../../services/job.service';
+import UserService from '../../services/user.service';
+import IncomesService from '../../services/incomes.service';
 
 const steps = [
   'Datos Personales',

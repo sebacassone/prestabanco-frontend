@@ -2,7 +2,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Error from '../assets/images/error.jpeg';
-import NavbarHome from './NavbarHome';
+import NavbarHome from './home/NavbarHome';
 
 const Error404: React.FC = () => {
   return (

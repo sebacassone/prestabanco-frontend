@@ -12,10 +12,10 @@ import {
   SelectChangeEvent,
 } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import LoanState from '../interfaces/LoanObject';
-import loanServices from '../services/loan.service';
-import ClientView from './ClientView';
-import requestService from '../services/request.service';
+import LoanState from '../../../interfaces/LoanObject';
+import loanServices from '../../../services/loan.service';
+import ClientView from '../ClientView';
+import requestService from '../../../services/request.service';
 
 const CreditSimulator: React.FC = () => {
   const [requestSuccess, setRequestSuccess] = useState(false);
@@ -341,7 +341,7 @@ const CreditSimulator: React.FC = () => {
                   <MenuItem value="Propiedades Comerciales">
                     Propiedades Comerciales
                   </MenuItem>
-                  <MenuItem value="Remodelación">Remodelación</MenuItem>
+                  <MenuItem value="Remodelaci0n">Remodelación</MenuItem>
                 </Select>
                 {errors.typeLoan && (
                   <Typography color="error" variant="body2">

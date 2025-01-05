@@ -14,10 +14,10 @@ import {
   DialogActions,
   Typography,
 } from '@mui/material';
-import requestService from '../services/request.service';
-import ResponseRequestUser from '../interfaces/ResponseRequestUser';
-import ExecutiveView from './ExecutiveView';
-import documentService from '../services/document.service';
+import requestService from '../../../services/request.service';
+import ResponseRequestUser from '../../../interfaces/ResponseRequestUser';
+import ExecutiveView from '../ExecutiveView';
+import documentService from '../../../services/document.service';
 
 const ViewAllRequests: React.FC = () => {
   const [solicitudes, setSolicitudes] = useState<ResponseRequestUser[]>([]);

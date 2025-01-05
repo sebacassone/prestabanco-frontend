@@ -7,13 +7,13 @@ import {
   InputAdornment,
   Box,
 } from '@mui/material';
-import StepContentProps from '../interfaces/StepContent';
-import RUTInput from './RutInput';
-import { ValidateEmail } from '../utils/functions/ValidateEmail';
+import StepContentProps from '../../interfaces/StepContent';
+import RUTInput from '../RutInput';
+import { ValidateEmail } from '../../utils/functions/ValidateEmail';
 import { useState } from 'react';
-import { ValidateDate, OfLegalAge } from '../utils/functions/ValidateDate';
-import Communes from '../utils/json/communes.json';
-import PasswordComponent from './PasswordComponent';
+import { ValidateDate, OfLegalAge } from '../../utils/functions/ValidateDate';
+import Communes from '../../utils/json/communes.json';
+import PasswordComponent from '../PasswordComponent';
 
 const StepContent: React.FC<StepContentProps> = ({
   step,
