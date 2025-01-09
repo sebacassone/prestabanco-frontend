@@ -14,12 +14,19 @@ import {
   DialogActions,
   Box,
   Typography,
+  Snackbar,
+  Alert,
 } from '@mui/material';
 import ClientView from '../ClientView';
 import requestService from '../../../services/request.service';
 import documentService from '../../../services/document.service';
 import evaluationService from '../../../services/evaluation.service';
 import ResponseRequestUser from '../../../interfaces/ResponseRequestUser';
+import UploadFileIcon from '@mui/icons-material/UploadFile';
+import DownloadIcon from '@mui/icons-material/Download';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CancelIcon from '@mui/icons-material/Cancel';
+import { themeColors } from '../../../assets/theme';
 
 const ViewRequests: React.FC = () => {
   const [idUser, setIdUser] = useState<number>(0);
@@ -34,6 +41,11 @@ const ViewRequests: React.FC = () => {
   const [docsForRequest, setDocsForRequest] = useState<
     { id: number; name: string; url: string }[]
   >([]);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>(
+    'success',
+  );
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -85,8 +97,6 @@ const ViewRequests: React.FC = () => {
           ?.replace(/"/g, '') || 'document';
       document.body.appendChild(link);
       link.click();
-
-      // Limpiar recursos
       link.parentNode?.removeChild(link);
       window.URL.revokeObjectURL(url);
     } catch (error) {
@@ -95,7 +105,7 @@ const ViewRequests: React.FC = () => {
   };
 
   const handleEnviar = async (id: number) => {
-    if (documentos[id]) {
+    if (documentos[id] && Object.values(documentos[id]).some((file) => file)) {
       const formData = new FormData();
       Object.entries(documentos[id]).forEach(([, value]) => {
         if (value) {
@@ -109,8 +119,8 @@ const ViewRequests: React.FC = () => {
         try {
           const evalResponse = await evaluationService.makeEvaluation(
             idUser,
-            solicitud.loan?.quotaLoan ?? 0,
-            solicitud.loan?.maximumAmountPercentageLoan ?? 0,
+            solicitud.leanRequest?.quotaLoan ?? 0,
+            solicitud.leanRequest?.maximumAmountPercentageLoan ?? 0,
             solicitud.typeLoan,
           );
 
@@ -129,11 +139,17 @@ const ViewRequests: React.FC = () => {
                 : solicitud,
             ),
           );
+          setSnackbarMessage('Documentos enviados con éxito');
+          setSnackbarSeverity('success');
+          setSnackbarOpen(true);
         } catch (error) {
           console.error(
             'Error al realizar la evaluación o actualizar el estado:',
             error,
           );
+          setSnackbarMessage('Error al enviar documentos');
+          setSnackbarSeverity('error');
+          setSnackbarOpen(true);
         }
       }
 
@@ -144,6 +160,10 @@ const ViewRequests: React.FC = () => {
         console.error('Error al subir documentos:', error);
         alert('Error al subir documentos');
       }
+    } else {
+      setSnackbarMessage('No se ha subido ningún archivo');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
     }
   };
 
@@ -172,9 +192,10 @@ const ViewRequests: React.FC = () => {
             : solicitud,
         ),
       );
+      setSnackbarMessage('Solicitud aprobada con éxito');
+      setSnackbarSeverity('success');
+      setSnackbarOpen(true);
     });
-
-    setVerCredito(null);
   };
 
   const handleCancelar = (id: number) => {
@@ -186,15 +207,26 @@ const ViewRequests: React.FC = () => {
             : solicitud,
         ),
       );
+      setSnackbarMessage('Solicitud cancelada');
+      setSnackbarSeverity('success');
+      setSnackbarOpen(true);
     });
+  };
 
-    setVerCredito(null);
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
   };
 
   return (
     <div>
       <ClientView />
-      <h1>Solicitudes de Crédito</h1>
+      <Typography
+        variant="h4"
+        align="center"
+        sx={{ marginBottom: 3, color: themeColors.primary, marginTop: '2rem' }}
+      >
+        Solicitudes de Crédito
+      </Typography>
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -203,6 +235,7 @@ const ViewRequests: React.FC = () => {
               <TableCell>Tipo de Préstamo</TableCell>
               <TableCell>Estado</TableCell>
               <TableCell>Acciones</TableCell>
+              <TableCell>Subir Documentos</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -211,6 +244,48 @@ const ViewRequests: React.FC = () => {
                 <TableCell>{solicitud.idRequest}</TableCell>
                 <TableCell>{solicitud.typeLoan}</TableCell>
                 <TableCell>{solicitud.stateRequest}</TableCell>
+                <TableCell>
+                  {[
+                    'Preaprobada',
+                    'Aprobado',
+                    'En Desembolso',
+                    'Solicitud Aprobada y Desembolsada',
+                  ].includes(solicitud.stateRequest) && (
+                    <Button
+                      variant="outlined"
+                      onClick={() => handleViewDocuments(solicitud.idRequest)}
+                      startIcon={<DownloadIcon />}
+                      sx={{
+                        marginTop: 2,
+                        borderColor: themeColors.primary,
+                        color: themeColors.primary,
+                        '&:hover': {
+                          borderColor: themeColors.secondary,
+                          color: themeColors.secondary,
+                        },
+                      }}
+                    >
+                      Ver Documentos
+                    </Button>
+                  )}
+                  {solicitud.stateRequest === 'Preaprobada' && (
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      onClick={() => setVerCredito(solicitud)}
+                      startIcon={<CheckCircleIcon />}
+                      sx={{
+                        marginTop: 2,
+                        backgroundColor: themeColors.primary,
+                        '&:hover': {
+                          backgroundColor: themeColors.secondary,
+                        },
+                      }}
+                    >
+                      Ver Crédito
+                    </Button>
+                  )}
+                </TableCell>
                 <TableCell>
                   {solicitud.stateRequest === 'Pendiente de Documentación' && (
                     <Box display="flex" flexDirection="column">
@@ -235,33 +310,18 @@ const ViewRequests: React.FC = () => {
                         variant="contained"
                         color="primary"
                         onClick={() => handleEnviar(solicitud.idRequest)}
+                        startIcon={<UploadFileIcon />}
+                        sx={{
+                          marginTop: 2,
+                          backgroundColor: themeColors.primary,
+                          '&:hover': {
+                            backgroundColor: themeColors.secondary,
+                          },
+                        }}
                       >
                         Enviar
                       </Button>
                     </Box>
-                  )}
-                  {[
-                    'Preaprobada',
-                    'Aprobado',
-                    'En Desembolso',
-                    'Solicitud Aprobada y Desembolsada',
-                  ].includes(solicitud.stateRequest) && (
-                    <Button
-                      variant="outlined"
-                      onClick={() => handleViewDocuments(solicitud.idRequest)}
-                    >
-                      Ver Documentos
-                    </Button>
-                  )}
-                  {solicitud.stateRequest === 'Preaprobada' && (
-                    <Button
-                      variant="contained"
-                      color="secondary"
-                      onClick={() => setVerCredito(solicitud)}
-                      style={{ marginLeft: '10px' }}
-                    >
-                      Ver Crédito
-                    </Button>
                   )}
                 </TableCell>
               </TableRow>
@@ -285,6 +345,13 @@ const ViewRequests: React.FC = () => {
                   <Button
                     variant="text"
                     onClick={() => handleDownloadDocument(doc.id)}
+                    startIcon={<DownloadIcon />}
+                    sx={{
+                      color: themeColors.primary,
+                      '&:hover': {
+                        color: themeColors.secondary,
+                      },
+                    }}
                   >
                     {doc.name}
                   </Button>
@@ -296,7 +363,17 @@ const ViewRequests: React.FC = () => {
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenDocsDialog(false)}>Cerrar</Button>
+          <Button
+            onClick={() => setOpenDocsDialog(false)}
+            sx={{
+              color: themeColors.primary,
+              '&:hover': {
+                color: themeColors.secondary,
+              },
+            }}
+          >
+            Cerrar
+          </Button>
         </DialogActions>
       </Dialog>
 
@@ -308,47 +385,45 @@ const ViewRequests: React.FC = () => {
         >
           <DialogTitle id="form-dialog-title">Detalle del Crédito</DialogTitle>
           <DialogContent>
-            {verCredito.loan && (
+            {verCredito.leanRequest && (
               <>
-                {' '}
-                <Typography variant="h6">
-                  Información del Préstamo
-                </Typography>{' '}
+                <Typography variant="h6">Información del Préstamo</Typography>
                 <Typography>
-                  ID del Préstamo: {verCredito.loan.idLoan}
-                </Typography>{' '}
+                  ID del Préstamo: {verCredito.leanRequest.idLoan}
+                </Typography>
                 <Typography>
-                  Monto del Préstamo: {verCredito.loan.amountLoan}
-                </Typography>{' '}
+                  Monto del Préstamo: {verCredito.leanRequest.amountLoan}
+                </Typography>
                 <Typography>
-                  Fecha de Concesión: {verCredito.loan.dateConcession}
-                </Typography>{' '}
+                  Fecha de Concesión: {verCredito.leanRequest.dateConcession}
+                </Typography>
                 <Typography>
-                  Interés del Préstamo: {verCredito.loan.interestLoan}
-                </Typography>{' '}
+                  Interés del Préstamo: {verCredito.leanRequest.interestLoan}
+                </Typography>
                 <Typography>
                   Porcentaje Máximo de Financiamiento:{' '}
-                  {verCredito.loan.maximumAmountPercentageLoan}
-                </Typography>{' '}
+                  {verCredito.leanRequest.maximumAmountPercentageLoan}
+                </Typography>
                 <Typography>
-                  Número de Pagos: {verCredito.loan.numberOfPaymentsLoan}
-                </Typography>{' '}
+                  Número de Pagos: {verCredito.leanRequest.numberOfPaymentsLoan}
+                </Typography>
                 <Typography>
-                  Cuota del Préstamo: {verCredito.loan.quotaLoan}
-                </Typography>{' '}
+                  Cuota del Préstamo: {verCredito.leanRequest.quotaLoan}
+                </Typography>
                 <Typography>
-                  Monto Total del Préstamo: {verCredito.loan.totalAmountLoan}
-                </Typography>{' '}
+                  Monto Total del Préstamo:{' '}
+                  {verCredito.leanRequest.totalAmountLoan}
+                </Typography>
                 <Typography>
-                  Monto del Seguro: {verCredito.loan.secureAmountLoan}
-                </Typography>{' '}
+                  Monto del Seguro: {verCredito.leanRequest.secureAmountLoan}
+                </Typography>
                 <Typography>
                   Monto de Administración:{' '}
-                  {verCredito.loan.administrationAmountLoan}
-                </Typography>{' '}
+                  {verCredito.leanRequest.administrationAmountLoan}
+                </Typography>
                 <Typography>
-                  Tipo de Préstamo: {verCredito.loan.typeLoan}
-                </Typography>{' '}
+                  Tipo de Préstamo: {verCredito.leanRequest.typeLoan}
+                </Typography>
               </>
             )}
           </DialogContent>
@@ -356,19 +431,37 @@ const ViewRequests: React.FC = () => {
             <Button
               onClick={() => handleAceptar(verCredito.idRequest)}
               color="primary"
+              variant="contained"
             >
               Aceptar Crédito
             </Button>
             <Button
               onClick={() => handleCancelar(verCredito.idRequest)}
               color="secondary"
+              variant="contained"
             >
               Cancelar Crédito
             </Button>
-            <Button onClick={() => setVerCredito(null)}>Cerrar</Button>
+            <Button onClick={() => setVerCredito(null)} variant="outlined">
+              Cerrar
+            </Button>
           </DialogActions>
         </Dialog>
       )}
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbarSeverity}
+          sx={{ width: '100%' }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };

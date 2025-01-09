@@ -1,13 +1,7 @@
 import { MouseEvent, useEffect, useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
-import AccountCircle from '@mui/icons-material/AccountCircle';
-import MenuItem from '@mui/material/MenuItem';
-import Menu from '@mui/material/Menu';
 import Button from '@mui/material/Button';
 import HomeIcon from '@mui/icons-material/Home';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
@@ -16,8 +10,13 @@ import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import SecurityIcon from '@mui/icons-material/Security';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';
+import LogoutIcon from '@mui/icons-material/Logout';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { Link } from 'react-router-dom';
 import user from '../../interfaces/ResponseUser';
+import { themeColors } from '../../assets/theme';
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import Logo from '../Logo';
 
 export default function MenuAppBar() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -86,62 +85,62 @@ export default function MenuAppBar() {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static" sx={{ backgroundColor: '#3f51b5' }}>
-        <Toolbar>
+      <AppBar position="static" sx={{ backgroundColor: themeColors.primary }}>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <Logo />
           <Typography
             variant="h6"
             component="div"
-            sx={{ flexGrow: 1, fontFamily: 'Roboto, sans-serif' }}
+            sx={{
+              flexGrow: 1,
+              fontFamily: 'Roboto, sans-serif',
+              marginLeft: '1rem',
+            }}
           >
-            Hola {user.nameUser}!
+            Hola, {user.nameUser}!
           </Typography>
-          <div>
-            <IconButton
-              size="large"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleMenu}
-              color="inherit"
-            >
-              <AccountCircle />
-            </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorEl}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              marginLeft: 'auto',
+              marginRight: '1rem',
+            }}
+          >
+            <Button
+              variant="contained"
+              sx={{
+                borderRadius: '20px',
+                bgcolor: 'grey',
+                color: 'white',
+                marginRight: '1em',
+                transition: 'all 0.3s ease',
               }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={Boolean(anchorEl)}
-              onClose={handleClose}
+              startIcon={<AccountCircleIcon />}
             >
-              <MenuItem
-                onClick={handleClose}
-                sx={{ fontFamily: 'Roboto, sans-serif' }}
-              >
-                Profile
-              </MenuItem>
-              <MenuItem
-                onClick={handleClose}
-                sx={{ fontFamily: 'Roboto, sans-serif' }}
-              >
-                My account
-              </MenuItem>
-              <MenuItem
-                onClick={handleLogout}
-                sx={{ fontFamily: 'Roboto, sans-serif' }}
-              >
-                Logout
-              </MenuItem>
-            </Menu>
-          </div>
-        </Toolbar>
+              Mi cuenta
+            </Button>
+            <Button
+              variant="contained"
+              sx={{
+                borderRadius: '20px',
+                bgcolor: 'red',
+                color: 'white',
+                transition: 'all 0.3s ease',
+              }}
+              onClick={handleLogout}
+              startIcon={<LogoutIcon sx={{ color: 'white' }} />}
+            >
+              Salir de la cuenta
+            </Button>
+          </Box>
+        </Box>
       </AppBar>
 
       <Box
@@ -161,7 +160,14 @@ export default function MenuAppBar() {
             variant="contained"
             color="primary"
             startIcon={item.icon}
-            sx={{ fontFamily: 'Roboto, sans-serif', minWidth: '120px' }}
+            sx={{
+              fontFamily: 'Roboto, sans-serif',
+              minWidth: '120px',
+              backgroundColor: themeColors.secondary,
+              '&:hover': {
+                backgroundColor: themeColors.accent,
+              },
+            }}
           >
             {item.text}
           </Button>

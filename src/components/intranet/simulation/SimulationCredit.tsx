@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, useEffect } from 'react';
+import React, { useState, ChangeEvent, useEffect, useRef } from 'react';
 import {
   Box,
   Button,
@@ -10,15 +10,20 @@ import {
   InputLabel,
   InputAdornment,
   SelectChangeEvent,
+  Stepper,
+  Step,
+  StepLabel,
 } from '@mui/material';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LoanState from '../../../interfaces/LoanObject';
 import loanServices from '../../../services/loan.service';
 import ClientView from '../ClientView';
 import requestService from '../../../services/request.service';
+import { themeColors } from '../../../assets/theme';
 
 const CreditSimulator: React.FC = () => {
   const [requestSuccess, setRequestSuccess] = useState(false);
+  const [currentStep, setCurrentStep] = useState(1); // Estado para el paso actual
+  const resultRef = useRef<HTMLDivElement>(null); // Referencia para el resultado
   // Definir el estado para los datos del préstamo
   const [loan, setLoan] = useState<LoanState>({
     amountLoan: 0,
@@ -120,6 +125,8 @@ const CreditSimulator: React.FC = () => {
         console.log('Respuesta de la simulación:', response.data);
         setSimulationResult(response.data);
         setShowResults(true);
+        setCurrentStep(2); // Cambiar al paso 2
+        resultRef.current?.scrollIntoView({ behavior: 'smooth' }); // Enfocar en el resultado
       })
       .catch((error: any) => {
         console.error('Error al simular el crédito:', error);
@@ -199,6 +206,7 @@ const CreditSimulator: React.FC = () => {
           variant="contained"
           color="primary"
           onClick={() => (window.location.href = '/intranet')}
+          sx={{ backgroundColor: themeColors.primary }}
         >
           Ir a Intranet
         </Button>
@@ -215,219 +223,241 @@ const CreditSimulator: React.FC = () => {
           flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
-          marginLeft: '35rem',
-          height: 'auto',
-          width: '40%',
+          margin: '0 auto',
           padding: 3,
-          backgroundColor: 'white',
+          backgroundColor: themeColors.background,
+          borderRadius: '20px',
+          boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+          maxWidth: '600px',
+          marginTop: '2rem',
         }}
       >
+        <Stepper
+          activeStep={currentStep - 1}
+          alternativeLabel
+          sx={{
+            width: '100%',
+            marginBottom: 3,
+            '& .MuiStepIcon-root.Mui-active': {
+              color: themeColors.primary,
+            },
+            '& .MuiStepIcon-root.Mui-completed': {
+              color: themeColors.secondary,
+            },
+            '& .MuiStepLabel-label': {
+              color: themeColors.textColor,
+            },
+          }}
+        >
+          <Step>
+            <StepLabel>Simular Crédito</StepLabel>
+          </Step>
+          <Step>
+            <StepLabel>Resultados</StepLabel>
+          </Step>
+        </Stepper>
+        <Typography
+          variant="h4"
+          sx={{ marginBottom: 3, color: themeColors.primary }}
+        >
+          Simulador de Crédito
+        </Typography>
         <Box
           sx={{
-            display: 'flex',
+            display: currentStep === 1 ? 'flex' : 'none',
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
-            marginBottom: 3,
-            borderColor: 'black',
-            borderWidth: 2,
-            borderStyle: 'solid',
-            borderRadius: 2,
-            padding: 3,
             width: '100%',
-            ...(showResults && { maxHeight: '50px', overflow: 'hidden' }), // Estilo para minimizar
+            gap: 2,
+            border: '1px solid',
+            borderColor: themeColors.borderColor,
+            borderRadius: '10px',
+            padding: 3,
           }}
         >
+          <TextField
+            label="Monto"
+            name="amountLoan"
+            value={
+              loan.amountLoan === 0
+                ? ''
+                : loan.amountLoan.toLocaleString('es-ES')
+            }
+            onChange={handleInputChange}
+            sx={{ marginBottom: 2 }}
+            fullWidth
+            type="text"
+            error={errors.amountLoan}
+            helperText={
+              errors.amountLoan
+                ? 'Debe ser un valor entre $50.000 y $40.000.000'
+                : 'Entre $50.000 y $40.000.000'
+            }
+          />
+          <TextField
+            label="Número de cuotas"
+            name="numberOfPaymentsLoan"
+            value={
+              loan.numberOfPaymentsLoan === 0 ? '' : loan.numberOfPaymentsLoan
+            }
+            onChange={handleInputChange}
+            sx={{ marginBottom: 2 }}
+            fullWidth
+            type="number"
+            error={errors.numberOfPaymentsLoan}
+            helperText={
+              errors.numberOfPaymentsLoan
+                ? 'Debe ser un valor entre 1 y 100'
+                : 'Entre 1 y 100'
+            }
+          />
+          <TextField
+            label="Porcentaje de Financiamiento"
+            name="maximumAmountPercentageLoan"
+            value={
+              loan.maximumAmountPercentageLoan === 0
+                ? ''
+                : loan.maximumAmountPercentageLoan
+            }
+            onChange={handleInputChange}
+            sx={{ marginBottom: 2 }}
+            fullWidth
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">%</InputAdornment>
+              ),
+            }}
+            type="number"
+            error={errors.maximumAmountPercentageLoan}
+            helperText={
+              errors.maximumAmountPercentageLoan
+                ? 'Debe ser un valor entre 0 y 100'
+                : ''
+            }
+          />
+          <TextField
+            label="Fecha de primer vencimiento"
+            name="dateConcession"
+            type="date"
+            value={loan.dateConcession}
+            onChange={handleInputChange}
+            sx={{ marginBottom: 2 }}
+            InputLabelProps={{ shrink: true }}
+            fullWidth
+            inputProps={{
+              min: new Date().toISOString().split('T')[0], // solo fechas futuras
+            }}
+          />
+          <FormControl fullWidth sx={{ marginBottom: 2 }}>
+            <InputLabel>Tipo de Préstamo</InputLabel>
+            <Select
+              name="typeLoan"
+              value={loan.typeLoan}
+              onChange={handleSelectChange}
+              error={errors.typeLoan}
+            >
+              <MenuItem value="Primera Vivienda">Primera Vivienda</MenuItem>
+              <MenuItem value="Segunda Vivienda">Segunda Vivienda</MenuItem>
+              <MenuItem value="Propiedades Comerciales">
+                Propiedades Comerciales
+              </MenuItem>
+              <MenuItem value="Remodelación">Remodelación</MenuItem>
+            </Select>
+            {errors.typeLoan && (
+              <Typography color="error" variant="body2">
+                Seleccione un tipo de préstamo
+              </Typography>
+            )}
+          </FormControl>
+          <Typography variant="body2" sx={{ marginBottom: 3 }}>
+            *Los seguros asociados al crédito son voluntarios y puedes
+            deshabilitarlos aquí.
+          </Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSimulate}
+            sx={{ marginBottom: 2, backgroundColor: themeColors.primary }}
+          >
+            Simula tu crédito
+          </Button>
+        </Box>
+
+        {showResults && (
           <Box
+            ref={resultRef}
             sx={{
               display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
               alignItems: 'center',
-              justifyContent: 'space-between',
+              borderColor: themeColors.borderColor,
+              borderWidth: 2,
+              borderStyle: 'solid',
+              borderRadius: 2,
+              padding: 3,
               width: '100%',
-              cursor: 'pointer',
+              marginTop: 3,
             }}
-            onClick={() => setShowResults(!showResults)} // Cambiar entre mostrar y minimizar
           >
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <AccountCircleIcon sx={{ fontSize: 40, marginRight: 1 }} />
-              <Typography variant="h5">1. Datos del crédito</Typography>
-            </Box>
-            <Typography variant="h5">{showResults ? '+' : '-'}</Typography>{' '}
-            {/* Indicador de minimizado */}
+            <Typography
+              variant="h5"
+              sx={{ marginBottom: 3, color: themeColors.primary }}
+            >
+              Resultados de la simulación
+            </Typography>
+            <Typography variant="body1">
+              <strong>Valor de la cuota:</strong> {simulationResult.quotaLoan}
+            </Typography>
+            <Typography variant="body1">
+              <strong>Cantidad de Cuotas:</strong>{' '}
+              {simulationResult.numberOfPaymentsLoan}
+            </Typography>
+            <Typography variant="body1">
+              <strong>Costos Administrativos:</strong>{' '}
+              {simulationResult.administrationAmountLoan}
+            </Typography>
+            <Typography variant="body1">
+              <strong>Seguro de incendio:</strong> {'20.000'}
+            </Typography>
+            <Typography variant="body1">
+              <strong>Tasa interés mensual:</strong>{' '}
+              {simulationResult.interestLoan}
+            </Typography>
+            <Typography variant="body1">
+              <strong>Costo total del crédito:</strong>{' '}
+              {simulationResult.totalAmountLoan}
+            </Typography>
+            <Typography variant="body1">
+              <strong>Primer vencimiento:</strong>{' '}
+              {simulationResult.dateConcession}
+            </Typography>
+            <Typography variant="body1">
+              <strong>Seguros:</strong> {simulationResult.secureAmountLoan}
+            </Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleRequestLoan}
+              sx={{ marginTop: 3, backgroundColor: themeColors.primary }}
+            >
+              Realizar solicitud
+            </Button>
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={() => setCurrentStep(1)}
+              sx={{
+                marginTop: 2,
+                borderColor: themeColors.primary,
+                color: themeColors.primary,
+              }}
+            >
+              Editar Simulación
+            </Button>
           </Box>
-          {!showResults && (
-            <>
-              <TextField
-                label="Monto"
-                name="amountLoan"
-                value={loan.amountLoan === 0 ? '' : loan.amountLoan}
-                onChange={handleInputChange}
-                sx={{ marginBottom: 2 }}
-                fullWidth
-                type="number"
-                error={errors.amountLoan}
-                helperText={
-                  errors.amountLoan
-                    ? 'Debe ser un valor entre $50.000 y $40.000.000'
-                    : 'Entre $50.000 y $40.000.000'
-                }
-              />
-              <TextField
-                label="Número de cuotas"
-                name="numberOfPaymentsLoan"
-                value={
-                  loan.numberOfPaymentsLoan === 0
-                    ? ''
-                    : loan.numberOfPaymentsLoan
-                }
-                onChange={handleInputChange}
-                sx={{ marginBottom: 2 }}
-                fullWidth
-                type="number"
-                error={errors.numberOfPaymentsLoan}
-                helperText={
-                  errors.numberOfPaymentsLoan
-                    ? 'Debe ser un valor entre 1 y 100'
-                    : 'Entre 1 y 100'
-                }
-              />
-              <TextField
-                label="Porcentaje de Financiamiento"
-                name="maximumAmountPercentageLoan"
-                value={
-                  loan.maximumAmountPercentageLoan === 0
-                    ? ''
-                    : loan.maximumAmountPercentageLoan
-                }
-                onChange={handleInputChange}
-                sx={{ marginBottom: 2 }}
-                fullWidth
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">%</InputAdornment>
-                  ),
-                }}
-                type="number"
-                error={errors.maximumAmountPercentageLoan}
-                helperText={
-                  errors.maximumAmountPercentageLoan
-                    ? 'Debe ser un valor entre 0 y 100'
-                    : ''
-                }
-              />
-              <TextField
-                label="Fecha de primer vencimiento"
-                name="dateConcession"
-                type="date"
-                value={loan.dateConcession}
-                onChange={handleInputChange}
-                sx={{ marginBottom: 2 }}
-                InputLabelProps={{ shrink: true }}
-                fullWidth
-                inputProps={{
-                  min: new Date().toISOString().split('T')[0], // solo fechas futuras
-                }}
-              />
-              <FormControl fullWidth sx={{ marginBottom: 2 }}>
-                <InputLabel>Tipo de Préstamo</InputLabel>
-                <Select
-                  name="typeLoan"
-                  value={loan.typeLoan}
-                  onChange={handleSelectChange}
-                  error={errors.typeLoan}
-                >
-                  <MenuItem value="Primera Vivienda">Primera Vivienda</MenuItem>
-                  <MenuItem value="Segunda Vivienda">Segunda Vivienda</MenuItem>
-                  <MenuItem value="Propiedades Comerciales">
-                    Propiedades Comerciales
-                  </MenuItem>
-                  <MenuItem value="Remodelación">Remodelación</MenuItem>
-                </Select>
-                {errors.typeLoan && (
-                  <Typography color="error" variant="body2">
-                    Seleccione un tipo de préstamo
-                  </Typography>
-                )}
-              </FormControl>
-              <Typography variant="body2" sx={{ marginBottom: 3 }}>
-                *Los seguros asociados al crédito son voluntarios y puedes
-                deshabilitarlos aquí.
-              </Typography>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleSimulate}
-              >
-                Simula tu crédito
-              </Button>
-            </>
-          )}
-        </Box>
-
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderColor: 'black',
-            borderWidth: 2,
-            borderStyle: 'solid',
-            borderRadius: 2,
-            padding: 3,
-            width: '100%',
-            opacity: showResults ? 1 : 0.5,
-            pointerEvents: showResults ? 'auto' : 'none',
-          }}
-        >
-          <Typography variant="h5" sx={{ marginBottom: 3 }}>
-            2. Resultados de la simulación
-          </Typography>
-          {simulationResult ? (
-            <>
-              <Typography variant="body1">
-                <strong>Valor de la cuota:</strong> {simulationResult.quotaLoan}
-              </Typography>
-              <Typography variant="body1">
-                <strong>Cantidad de Cuotas:</strong>{' '}
-                {simulationResult.numberOfPaymentsLoan}
-              </Typography>
-              <Typography variant="body1">
-                <strong>Costos Administrativos:</strong>{' '}
-                {simulationResult.administrationAmountLoan}
-              </Typography>
-              <Typography variant="body1">
-                <strong>Seguro de incendio:</strong> {'20.000'}
-              </Typography>
-              <Typography variant="body1">
-                <strong>Tasa interés mensual:</strong>{' '}
-                {simulationResult.interestLoan}
-              </Typography>
-              <Typography variant="body1">
-                <strong>Costo total del crédito:</strong>{' '}
-                {simulationResult.totalAmountLoan}
-              </Typography>
-              <Typography variant="body1">
-                <strong>Primer vencimiento:</strong>{' '}
-                {simulationResult.dateConcession}
-              </Typography>
-              <Typography variant="body1">
-                <strong>Seguros:</strong> {simulationResult.secureAmountLoan}
-              </Typography>
-
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleRequestLoan}
-                sx={{ marginTop: 3 }}
-              >
-                Realizar solicitud
-              </Button>
-            </>
-          ) : (
-            <Typography variant="body1">No disponible</Typography>
-          )}
-        </Box>
+        )}
       </Box>
     </>
   );
