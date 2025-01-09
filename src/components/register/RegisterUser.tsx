@@ -144,7 +144,8 @@ const UserForm: React.FC = () => {
         setIsSubmitted(true);
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
       } catch (error) {
-        console.error('Error al registrar:', error);
+        // Abre una ventana de que hubo un error con el servidor
+        alert('Hubo un error con el servidor');
       }
     }
   };
