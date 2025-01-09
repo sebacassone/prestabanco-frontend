@@ -6,6 +6,7 @@ import {
   OutlinedInput,
   InputAdornment,
   Box,
+  Typography,
 } from '@mui/material';
 import StepContentProps from '../../interfaces/StepContent';
 import RUTInput from '../RutInput';
@@ -28,10 +29,17 @@ const StepContent: React.FC<StepContentProps> = ({
   const [errorIncome, setErrorIncome] = useState<string[]>(Array(12).fill(''));
   const [errorPassword, setErrorPassword] = useState<string>('');
   const [PasswordConfirmation, setPasswordConfirmation] = useState<string>('');
+
   switch (step) {
     case 0:
       return (
         <div>
+          <Typography
+            sx={{ marginTop: '1rem', marginBottom: '1rem' }}
+            variant="h4"
+          >
+            ¿Quién Eres? Ingresa tus datos
+          </Typography>
           <Box display="flex" flexDirection="row" gap={2}>
             <TextField
               label="Nombre"
@@ -88,8 +96,8 @@ const StepContent: React.FC<StepContentProps> = ({
               inputProps={{
                 maxLength: 8,
                 inputMode: 'numeric',
-                pattern: '[0-9]*', // This ensures only numbers are accepted
-              }} // Ensure max length is 8 for the remaining part
+                pattern: '[0-9]*',
+              }}
             />
           </FormControl>
           <TextField
@@ -104,7 +112,7 @@ const StepContent: React.FC<StepContentProps> = ({
             onChange={handleChange}
             onBlur={() => {
               if (!ValidateEmail(user.email) && user.email.length > 0) {
-                setErrorEmail('Error: Debes ingresar un email válido.');
+                setErrorEmail('Debes ingresar un email válido.');
               } else {
                 setErrorEmail('');
               }
@@ -126,9 +134,9 @@ const StepContent: React.FC<StepContentProps> = ({
               if (user.birthday.length === 0) {
                 setErrorBirthday('');
               } else if (!ValidateDate(user.birthday)) {
-                setErrorBirthday('Error: Debes ingresar una fecha válida.');
+                setErrorBirthday('Debes ingresar una fecha válida.');
               } else if (!OfLegalAge(user.birthday)) {
-                setErrorBirthday('Error: Debes ser mayor de edad.');
+                setErrorBirthday('Debes ser mayor de edad.');
               } else {
                 setErrorBirthday('');
               }
@@ -140,6 +148,12 @@ const StepContent: React.FC<StepContentProps> = ({
     case 1:
       return (
         <div>
+          <Typography
+            sx={{ marginTop: '1rem', marginBottom: '1rem' }}
+            variant="h4"
+          >
+            ¿De dónde eres? Ingresa tu dirección
+          </Typography>
           <TextField
             label="Calle"
             name="street"
@@ -170,13 +184,11 @@ const StepContent: React.FC<StepContentProps> = ({
             onChange={handleChange}
             required
           >
-            {' '}
             {Communes.regions.map((region) => (
               <MenuItem key={region.abbreviation} value={region.name}>
-                {' '}
-                {region.name}{' '}
+                {region.name}
               </MenuItem>
-            ))}{' '}
+            ))}
           </TextField>
           <TextField
             select
@@ -188,15 +200,13 @@ const StepContent: React.FC<StepContentProps> = ({
             onChange={handleChange}
             required
           >
-            {' '}
             {Communes.regions
               .find((region) => region.name === address.region)
               ?.communes.map((commune) => (
                 <MenuItem key={commune.identifier} value={commune.name}>
-                  {' '}
-                  {commune.name}{' '}
+                  {commune.name}
                 </MenuItem>
-              ))}{' '}
+              ))}
           </TextField>
           <TextField
             select
@@ -216,6 +226,12 @@ const StepContent: React.FC<StepContentProps> = ({
     case 2:
       return (
         <div>
+          <Typography
+            sx={{ marginTop: '1rem', marginBottom: '1rem' }}
+            variant="h4"
+          >
+            ¿Cúal es tu situación laboral?
+          </Typography>
           <TextField
             select
             label="Tipo de actividad"
@@ -230,104 +246,118 @@ const StepContent: React.FC<StepContentProps> = ({
             <MenuItem value="empleado">Empleado</MenuItem>
             <MenuItem value="independiente">Independiente</MenuItem>
             <MenuItem value="estudiante">Estudiante</MenuItem>
-            <MenuItem value="cesante">Cesante</MenuItem>
           </TextField>
-          {job.activity !== 'cesante' && (
-            <TextField
-              label="¿Qué fecha comenzó en su trabajo actual (con ingresos)?"
-              name="seniorityJob"
-              type="date"
-              fullWidth
-              margin="normal"
-              InputLabelProps={{ shrink: true }}
-              value={job.seniorityJob}
-              onChange={handleChange}
-              error={Boolean(errorBirthday)}
-              helperText={errorBirthday}
-              onBlur={() => {
-                if (job.seniorityJob.length === 0) {
-                  setErrorBirthday('');
-                } else if (!ValidateDate(job.seniorityJob)) {
-                  setErrorBirthday('Error: Debes ingresar una fecha válida.');
-                } else {
-                  setErrorBirthday('');
-                }
-              }}
-              required
-            />
-          )}
+          <TextField
+            label="¿Qué fecha comenzó en su trabajo actual (con ingresos)?"
+            name="seniorityJob"
+            type="date"
+            fullWidth
+            margin="normal"
+            InputLabelProps={{ shrink: true }}
+            value={job.seniorityJob}
+            onChange={handleChange}
+            error={Boolean(errorBirthday)}
+            helperText={errorBirthday}
+            onBlur={() => {
+              if (job.seniorityJob.length === 0) {
+                setErrorBirthday('');
+              } else if (!ValidateDate(job.seniorityJob)) {
+                setErrorBirthday('Debes ingresar una fecha válida.');
+              } else {
+                setErrorBirthday('');
+              }
+            }}
+            required
+          />
         </div>
       );
     case 3:
       return (
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(4, 1fr)',
-            gap: '10px',
-          }}
-        >
-          {incomes.map((income, index) => (
-            <div
-              key={index}
-              style={{ display: 'flex', flexDirection: 'column' }}
-            >
-              <TextField
-                label={`Ingreso ${index + 1} - Fecha`}
-                name="date"
-                type="date"
-                fullWidth
-                margin="normal"
-                InputLabelProps={{ shrink: true }}
-                value={income.date}
-                error={Boolean(errorIncome[index])}
-                helperText={
-                  <span
-                    style={{
-                      height: '1rem',
-                      fontSize: '0.75rem',
-                      margin: '0',
-                      padding: '0',
-                      color: 'red',
-                    }}
-                  >
-                    {errorIncome[index] ? errorIncome[index] : '\u00A0'}{' '}
-                    {/* No-break space to keep height */}
-                  </span>
-                }
-                onChange={(e) => handleChange(e, index)}
-                onBlur={() => {
-                  if (!ValidateDate(income.date)) {
-                    setErrorIncome((prev) => {
-                      prev[index] = 'Error: Debes ingresar una fecha válida.';
-                      return [...prev];
-                    });
-                  } else {
-                    console.log('Valid date');
-                    setErrorIncome((prev) => {
-                      prev[index] = '';
-                      return [...prev];
-                    });
+        <div>
+          <Typography
+            sx={{ marginTop: '1rem', marginBottom: '1rem' }}
+            variant="h4"
+          >
+            ¿Cuánto ganas al mes? Ingresa tus ingresos
+          </Typography>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(4, 1fr)',
+              gap: '0.5em',
+            }}
+          >
+            {incomes.map((income, index) => (
+              <div
+                key={index}
+                style={{ display: 'flex', flexDirection: 'column' }}
+              >
+                <TextField
+                  label={`Ingreso ${index + 1} - Fecha`}
+                  name="date"
+                  type="date"
+                  fullWidth
+                  margin="normal"
+                  InputLabelProps={{ shrink: true }}
+                  value={income.date}
+                  error={Boolean(errorIncome[index])}
+                  helperText={
+                    <span
+                      style={{
+                        height: '1rem',
+                        fontSize: '0.75rem',
+                        margin: '0',
+                        padding: '0',
+                        color: 'red',
+                      }}
+                    >
+                      {errorIncome[index] ? errorIncome[index] : '\u00A0'}{' '}
+                    </span>
                   }
-                }}
-                required
-              />
-              <TextField
-                label={`Ingreso ${index + 1} - Monto`}
-                name="amount"
-                fullWidth
-                margin="normal"
-                value={income.amount}
-                onChange={(e) => handleChange(e, index)}
-                required
-              />
-            </div>
-          ))}
+                  onChange={(e) => handleChange(e, index)}
+                  onBlur={() => {
+                    if (!ValidateDate(income.date)) {
+                      setErrorIncome((prev) => {
+                        prev[index] = 'Debes ingresar una fecha válida.';
+                        return [...prev];
+                      });
+                    } else {
+                      setErrorIncome((prev) => {
+                        prev[index] = '';
+                        return [...prev];
+                      });
+                    }
+                  }}
+                  InputProps={{
+                    inputProps: {
+                      max: new Date().toISOString().split('T')[0],
+                    },
+                  }}
+                  required
+                />
+                <TextField
+                  label={`Ingreso ${index + 1} - Monto`}
+                  name="amount"
+                  fullWidth
+                  margin="normal"
+                  value={income.amount}
+                  onChange={(e) => handleChange(e, index)}
+                  required
+                />
+              </div>
+            ))}
+          </div>
         </div>
       );
     case 4:
       return (
         <div>
+          <Typography
+            sx={{ marginTop: '1rem', marginBottom: '1rem' }}
+            variant="h4"
+          >
+            Por último, crea una contraseña para la cuenta
+          </Typography>
           <PasswordComponent
             value={user.password}
             onValueChange={(value) =>
@@ -343,7 +373,7 @@ const StepContent: React.FC<StepContentProps> = ({
                 user.password !== '' &&
                 PasswordConfirmation !== ''
               ) {
-                setErrorPassword('Error: Las contraseñas no coinciden.');
+                setErrorPassword('Las contraseñas no coinciden.');
               } else {
                 setErrorPassword('');
               }
@@ -361,7 +391,7 @@ const StepContent: React.FC<StepContentProps> = ({
                 user.password !== '' &&
                 PasswordConfirmation !== ''
               ) {
-                setErrorPassword('Error: Las contraseñas no coinciden.');
+                setErrorPassword('Las contraseñas no coinciden.');
               } else {
                 setErrorPassword('');
               }

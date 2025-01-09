@@ -18,6 +18,21 @@ import JobService from '../../services/job.service';
 import UserService from '../../services/user.service';
 import IncomesService from '../../services/incomes.service';
 
+// Define the theme colors
+export const themeColors = {
+  primary: '#9B7EBD',
+  secondary: '#3B1E54',
+  accent: '#EEEEEE',
+  background: '#FFFFFF',
+  backgroundOverlay: 'rgba(255, 255, 255, 0.9)',
+  borderColor: '#EEEEEE',
+  textColor: '#EEEEEE',
+  buttonHover: 'rgba(255, 255, 255, 0.2)',
+  buttonActive: 'rgba(255, 255, 255, 0.1)',
+  buttonBackground: '#EEEEEE',
+  buttonText: '#3B1E54',
+};
+
 const steps = [
   'Datos Personales',
   'Dirección',
@@ -57,9 +72,7 @@ const UserForm: React.FC = () => {
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
   const handleNext = () => {
-    // For the first step when the user is in the first step
     if (activeStep < steps.length - 1 && activeStep === 0) {
-      // Validate the user data
       if (
         user.rut.length !== 0 &&
         user.phone.length !== 0 &&
@@ -72,10 +85,10 @@ const UserForm: React.FC = () => {
         user.email.length !== 0
       ) {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      } else {
+        alert('Por favor, complete los campos correctamente');
       }
-      // For the second step when the address is in the second step
     } else if (activeStep < steps.length - 1 && activeStep === 1) {
-      // Validate the address data
       if (
         address.street.length !== 0 &&
         address.number.length !== 0 &&
@@ -84,24 +97,24 @@ const UserForm: React.FC = () => {
         address.country.length !== 0
       ) {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      } else {
+        alert('Por favor, complete los campos correctamente');
       }
-      // For the third step when the job is in the third step
     } else if (activeStep < steps.length - 1 && activeStep === 2) {
-      // Validate the job data
       if (job.activity.length !== 0 && job.seniorityJob.length !== 0) {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      } else {
+        alert('Por favor, complete los campos correctamente');
       }
-      // For the fourth step when the incomes are in the fourth step
     } else if (activeStep < steps.length - 1 && activeStep === 3) {
-      // Validate the incomes data
       let isValid = incomes.every((income) => {
         return income.amount !== 0 && income.date !== '';
       });
       if (isValid) {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      } else {
+        alert('Por favor, complete los campos correctamente');
       }
-    } else {
-      setActiveStep((prevActiveStep) => prevActiveStep + 1);
     }
   };
 
@@ -114,22 +127,17 @@ const UserForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (user.password.length !== 0) {
-      // Call the services
       try {
-        // Call the management service and get the answer.
         const addressResponse = await AdressService.create(address);
         const addressId = addressResponse.data.idAddress;
         console.log('Address ID:', addressId);
 
-        // Call the user service using the address ID and get the answer.
         const userResponse = await UserService.create(user, addressId);
         const userId = userResponse.data.idUser;
 
-        // Call the work service using the user ID and get the answer.
         const jobResponse = await JobService.create(job, userId);
-        const jobId = jobResponse.data.idJob; // Obtiene el ID del trabajo
+        const jobId = jobResponse.data.idJob;
 
-        // Calling the revenue service using the job ID
         await IncomesService.create(incomes, jobId);
 
         console.log('Registro completado exitosamente');
@@ -189,41 +197,43 @@ const UserForm: React.FC = () => {
       sx={{
         position: 'relative',
         width: '100%',
-        height: '55rem',
+        height: 'auto',
+        minHeight: '55rem',
         backgroundImage: `url(${Background})`,
         backgroundRepeat: 'no-repeat',
         backgroundSize: 'cover',
         borderBottomLeftRadius: '50% 1rem',
-        borderBottomRightRadius: '150% 7rem',
+        borderBottomRightRadius: '200% 10rem',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
         overflow: 'hidden',
-        padding: '1rem',
+        padding: '2rem',
       }}
     >
       <Box
         sx={{
           maxWidth: '40%',
-          color: 'white',
+          color: themeColors.textColor,
           marginLeft: '13rem',
         }}
       >
-        <Typography variant="h4">
+        <Typography variant="h4" sx={{ color: themeColors.textColor }}>
           Porque nos mueve un mundo financiero simple y transparente
         </Typography>
-        <Typography variant="h5">
+        <Typography variant="h5" sx={{ color: themeColors.textColor }}>
           Aprende sobre educación financiera junto a nosotros.
         </Typography>
       </Box>
       <Box
         sx={{
-          backgroundColor: 'rgba(255, 255, 255, 0.9)',
-          padding: '2rem',
+          backgroundColor: themeColors.backgroundOverlay,
+          padding: '2.5rem',
           borderRadius: '50px',
           boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
           width: '50rem',
-          height: '45rem',
+          height: 'auto',
+          minHeight: '45rem',
           position: 'relative',
           textAlign: 'center',
           marginLeft: 'auto',
@@ -233,17 +243,37 @@ const UserForm: React.FC = () => {
         <Typography variant="h5" sx={{ marginBottom: '20px' }}>
           Registro PrestaBanco
         </Typography>
-        {/* Print the flow */}
-        <Stepper activeStep={activeStep} alternativeLabel>
+        <Stepper
+          sx={{
+            color: themeColors.primary, // Apply primary color to text/icons
+            backgroundColor: themeColors.background, // Set the background color
+            borderRadius: '50px',
+            marginBottom: '1rem',
+            '& .MuiStepLabel-root': {
+              color: themeColors.primary, // Set step label text color
+            },
+            '& .MuiStepConnector-line': {
+              borderColor: themeColors.primary, // Change the connector line color between steps
+            },
+            '& .MuiStepIcon-root.Mui-active': {
+              color: themeColors.secondary, // Change active step icon color
+            },
+            '& .MuiStepIcon-root.Mui-completed': {
+              color: themeColors.primary, // Change completed step icon color
+            },
+          }}
+          activeStep={activeStep}
+          alternativeLabel
+        >
           {steps.map((label) => (
             <Step key={label}>
               <StepLabel>{label}</StepLabel>
             </Step>
           ))}
         </Stepper>
+
         {!isSubmitted ? (
           <form onSubmit={handleSubmit}>
-            {/* Print the forms */}
             <StepContent
               step={activeStep}
               user={user}
@@ -252,37 +282,60 @@ const UserForm: React.FC = () => {
               incomes={incomes}
               handleChange={handleChange}
             />
-            {/* Prints the changing button */}
             <Box
               sx={{
                 display: 'flex',
                 justifyContent: 'space-between',
-                marginTop: '5rem',
-                position: 'absolute',
-                bottom: '1rem', // Añadir esta línea
+                marginTop: '2rem',
+                marginBottom: '1rem',
+                position: 'relative',
+                bottom: '1rem',
                 width: '90%',
               }}
             >
               {activeStep > 0 && (
-                <Button onClick={handleBack} sx={{ marginRight: '10px' }}>
+                <Button
+                  onClick={handleBack}
+                  sx={{
+                    marginRight: '10px',
+                    color: themeColors.primary,
+                  }}
+                >
                   Atrás
                 </Button>
               )}
               {activeStep < steps.length - 1 ? (
-                <Button
-                  onClick={handleNext}
-                  variant="contained"
-                  color="primary"
-                  fullWidth
+                <Box
+                  sx={{
+                    flexGrow: 1,
+                    display: 'flex',
+                    justifyContent: 'flex-end',
+                  }}
                 >
-                  Siguiente
-                </Button>
+                  <Button
+                    onClick={handleNext}
+                    variant="contained"
+                    sx={{
+                      backgroundColor: themeColors.primary,
+                      '&:hover': {
+                        backgroundColor: themeColors.secondary,
+                      },
+                    }}
+                  >
+                    Siguiente
+                  </Button>
+                </Box>
               ) : (
                 <Button
                   type="submit"
                   variant="contained"
-                  color="primary"
                   fullWidth
+                  sx={{
+                    backgroundColor: themeColors.primary,
+                    '&:hover': {
+                      backgroundColor: themeColors.secondary,
+                    },
+                  }}
                 >
                   Enviar
                 </Button>
@@ -296,7 +349,7 @@ const UserForm: React.FC = () => {
               flexDirection: 'column',
               justifyContent: 'center',
               alignItems: 'center',
-              height: '100%', // Para asegurar que ocupe todo el espacio disponible
+              height: '100%',
             }}
           >
             <Typography variant="h5" sx={{ marginBottom: '20px' }}>
@@ -304,10 +357,12 @@ const UserForm: React.FC = () => {
             </Typography>
             <Button
               variant="contained"
-              color="primary"
               onClick={() => (window.location.href = '/')}
               sx={{
-                margin: 'auto',
+                backgroundColor: themeColors.primary,
+                '&:hover': {
+                  backgroundColor: themeColors.buttonHover,
+                },
               }}
             >
               Volver al inicio

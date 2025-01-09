@@ -341,7 +341,7 @@ const CreditSimulator: React.FC = () => {
                   <MenuItem value="Propiedades Comerciales">
                     Propiedades Comerciales
                   </MenuItem>
-                  <MenuItem value="Remodelaci0n">Remodelación</MenuItem>
+                  <MenuItem value="Remodelación">Remodelación</MenuItem>
                 </Select>
                 {errors.typeLoan && (
                   <Typography color="error" variant="body2">
